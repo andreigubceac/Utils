@@ -1,0 +1,27 @@
+//
+//  AGRevealViewController.h
+//
+//  Created by Andrei Gubceac on 1/29/13.
+//  Copyright (c) 2013. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+extern NSString *kAGRevealViewControllerWillRevealNotification, *kAGRevealViewControllerDidRevealNotification;
+extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewControllerDidCoverNotification;
+
+@interface AGRevealViewController : UIViewController
+@property (nonatomic, strong) UIViewController *leftViewController, *centerViewController, *rightViewController;
+@property (nonatomic) BOOL disableLeftReveal, disableRightReveal;
+
+- (id)initWithLeftViewController:(UIViewController*)leftViewController
+             rightViewController:(UIViewController*)rightViewController centerViewController:(UIViewController*)centerViewController;
+
+- (void)toggleLeftSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;
+- (void)toggleRightSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
+- (void)closeLeftSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
+- (void)closeRightSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
+
+- (UIBarButtonItem*)addLeftItemWithButton:(UIButton*)button;
+- (UIBarButtonItem*)addRightItemWithButton:(UIButton*)button;
+@end
