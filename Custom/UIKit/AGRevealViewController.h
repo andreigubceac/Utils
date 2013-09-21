@@ -22,6 +22,6 @@ extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewCon
 - (void)closeLeftSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
 - (void)closeRightSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
 
-- (UIBarButtonItem*)addLeftItemWithButton:(UIButton*)button;
-- (UIBarButtonItem*)addRightItemWithButton:(UIButton*)button;
+- (UIBarButtonItem*)leftItemWithButton:(UIButton*)button;
+- (UIBarButtonItem*)rightItemWithButton:(UIButton*)button;
 @end

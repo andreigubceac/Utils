@@ -7,6 +7,8 @@
 
 #import "AGOptionViewController.h"
 
+NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *kSectionFooter = @"kSectionFooter", *kSectionRowBlock = @"kSectionRowBlock";
+
 @interface AGOptionViewController ()
 
 @end
@@ -33,17 +35,17 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_optionsArray objectAtIndex:section][@"sectionRows"] count];
+    return [[_optionsArray objectAtIndex:section][kSectionRows] count];
 }
 
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return [_optionsArray objectAtIndex:section][@"sectionHeader"];
+    return [_optionsArray objectAtIndex:section][kSectionHeader];
 }
 
 - (NSString*)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    return [_optionsArray objectAtIndex:section][@"sectionFooter"];
+    return [_optionsArray objectAtIndex:section][kSectionFooter];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -54,7 +56,7 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    id obj = [[_optionsArray objectAtIndex:indexPath.section][@"sectionRows"] objectAtIndex:indexPath.row];
+    id obj = [[_optionsArray objectAtIndex:indexPath.section][kSectionRows] objectAtIndex:indexPath.row];
     // Configure the cell...
     [self configureCell:cell withDictionary:obj atIndexPath:indexPath];
     return cell;
@@ -63,14 +65,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    id obj = [[_optionsArray objectAtIndex:indexPath.section][@"sectionRows"] objectAtIndex:indexPath.row];
-    void (^block)() = obj[@"block"];
+    id obj = [[_optionsArray objectAtIndex:indexPath.section][kSectionRows] objectAtIndex:indexPath.row];
+    void (^block)() = obj[kSectionRowBlock];
     if (block)
         block();
-    if ([self.navigationController.viewControllers indexOfObject:self] == self.navigationController.viewControllers.count-2)
-    {
-        self.navigationController.topViewController.navigationItem.title = obj[@"text"];
-    }
 }
 
 

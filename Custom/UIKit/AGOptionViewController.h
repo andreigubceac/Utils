@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSString *kSectionHeader, *kSectionRows, *kSectionFooter, *kSectionRowBlock;
+
 @interface AGOptionViewController : UITableViewController
 {
     NSArray *_optionsArray;

@@ -329,14 +329,14 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
         block();
 }
 
-- (UIBarButtonItem*)addLeftItemWithButton:(UIButton*)button
+- (UIBarButtonItem*)leftItemWithButton:(UIButton*)button
 {
     UIBarButtonItem *_b = [[UIBarButtonItem alloc] initWithCustomView:button];
     [button addTarget:self action:@selector(toggleLeftSide:) forControlEvents:UIControlEventTouchUpInside];
     return _b;
 }
 
-- (UIBarButtonItem*)addRightItemWithButton:(UIButton*)button
+- (UIBarButtonItem*)rightItemWithButton:(UIButton*)button
 {
     UIBarButtonItem *_b = [[UIBarButtonItem alloc] initWithCustomView:button];
     [button addTarget:self action:@selector(toggleRightSide:) forControlEvents:UIControlEventTouchUpInside];
