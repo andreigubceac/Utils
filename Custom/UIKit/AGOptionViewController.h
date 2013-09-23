@@ -7,11 +7,12 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString *kSectionHeader, *kSectionRows, *kSectionFooter, *kSectionRowBlock;
+extern NSString *kOptionSectionHeaderText, *kOptionSectionRowsArray, *kOptionSectionFooterText, *kOptionSectionRowBlock;
 
 @interface AGOptionViewController : UITableViewController
 {
     NSArray *_optionsArray;
 }
+- (void)reloadData:(NSArray*)optionArray;
 - (void)configureCell:(UITableViewCell*)cell withDictionary:(id)dict atIndexPath:(NSIndexPath*)indexPath;
 @end

@@ -7,7 +7,7 @@
 
 #import "AGOptionViewController.h"
 
-NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *kSectionFooter = @"kSectionFooter", *kSectionRowBlock = @"kSectionRowBlock";
+NSString *kOptionSectionHeaderText = @"kOptionSectionHeaderText", *kOptionSectionRowsArray = @"kOptionSectionRowsArray", *kOptionSectionFooterText = @"kOptionSectionFooterText", *kOptionSectionRowBlock = @"kOptionSectionRowBlock";
 
 @interface AGOptionViewController ()
 
@@ -24,6 +24,14 @@ NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *
 - (void)configureCell:(UITableViewCell*)cell withDictionary:(id)dict atIndexPath:(NSIndexPath*)indexPath
 {
 }
+
+- (void)reloadData:(NSArray*)optionArray
+{
+    if ([_optionsArray isEqualToArray:optionArray])
+        return;
+    _optionsArray = optionArray;
+    [self.tableView reloadData];
+}
 @end
 
 @implementation AGOptionViewController (UITableView)
@@ -35,17 +43,17 @@ NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[_optionsArray objectAtIndex:section][kSectionRows] count];
+    return [[_optionsArray objectAtIndex:section][kOptionSectionRowsArray] count];
 }
 
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return [_optionsArray objectAtIndex:section][kSectionHeader];
+    return [_optionsArray objectAtIndex:section][kOptionSectionHeaderText];
 }
 
 - (NSString*)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    return [_optionsArray objectAtIndex:section][kSectionFooter];
+    return [_optionsArray objectAtIndex:section][kOptionSectionFooterText];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -56,7 +64,7 @@ NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    id obj = [[_optionsArray objectAtIndex:indexPath.section][kSectionRows] objectAtIndex:indexPath.row];
+    id obj = [[_optionsArray objectAtIndex:indexPath.section][kOptionSectionRowsArray] objectAtIndex:indexPath.row];
     // Configure the cell...
     [self configureCell:cell withDictionary:obj atIndexPath:indexPath];
     return cell;
@@ -65,8 +73,8 @@ NSString *kSectionHeader = @"kSectionHeader", *kSectionRows = @"kSectionRows", *
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    id obj = [[_optionsArray objectAtIndex:indexPath.section][kSectionRows] objectAtIndex:indexPath.row];
-    void (^block)() = obj[kSectionRowBlock];
+    id obj = [[_optionsArray objectAtIndex:indexPath.section][kOptionSectionRowsArray] objectAtIndex:indexPath.row];
+    void (^block)() = obj[kOptionSectionRowBlock];
     if (block)
         block();
 }
