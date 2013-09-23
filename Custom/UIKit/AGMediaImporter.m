@@ -52,7 +52,7 @@ static AGMediaImporter *delegate;
         UIImagePickerControllerWithBlocks *picker = [[UIImagePickerControllerWithBlocks alloc] init];
         picker.allowsEditing = YES;
         picker.sourceType = (buttonIndex==0?UIImagePickerControllerSourceTypePhotoLibrary:UIImagePickerControllerSourceTypeCamera);
-        [self.viewController presentModalViewController:picker animated:YES];
+        [self.viewController presentViewController:picker animated:YES completion:nil];
         picker.didCancelBlock = ^(UIImagePickerControllerWithBlocks *picker_)
         {
             [self.viewController dismissViewControllerAnimated:YES completion:^{
