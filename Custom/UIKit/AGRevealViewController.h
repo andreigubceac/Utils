@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
+extern float kOffsetX;
 extern NSString *kAGRevealViewControllerWillRevealNotification, *kAGRevealViewControllerDidRevealNotification;
 extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewControllerDidCoverNotification;
 
@@ -24,4 +25,6 @@ extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewCon
 
 - (UIBarButtonItem*)leftItemWithButton:(UIButton*)button;
 - (UIBarButtonItem*)rightItemWithButton:(UIButton*)button;
+
+- (void)panGestureAction:(UIPanGestureRecognizer*)g;//subclass
 @end

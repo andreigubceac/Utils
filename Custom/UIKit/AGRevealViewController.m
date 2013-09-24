@@ -8,7 +8,7 @@
 #import "AGRevealViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-const float kOffsetX = 60;
+float kOffsetX = 60;
 const CGFloat kSlideAnimationDuration = .3;
 
 NSString *kAGRevealViewControllerWillRevealNotification = @"kAGRevealViewControllerWillRevealNotification", *kAGRevealViewControllerDidRevealNotification = @"kAGRevealViewControllerDidRevealNotification";
@@ -20,6 +20,7 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
     UIButton *_leftItem, *_rightItem;
     UIPanGestureRecognizer *_panGesture;
 }
+- (void)panGestureAction:(UIPanGestureRecognizer*)g;
 @end
 
 @implementation AGRevealViewController
@@ -141,6 +142,7 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
 
 - (void)panGestureAction:(UIPanGestureRecognizer*)g
 {
+    [self childViewControllers];
     if (UIGestureRecognizerStateBegan == g.state)
     {
         self.view.userInteractionEnabled = NO;
