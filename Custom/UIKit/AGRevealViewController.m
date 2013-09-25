@@ -142,7 +142,6 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
 
 - (void)panGestureAction:(UIPanGestureRecognizer*)g
 {
-    [self childViewControllers];
     if (UIGestureRecognizerStateBegan == g.state)
     {
         self.view.userInteractionEnabled = NO;
