@@ -10,3 +10,7 @@
 @interface UIImage (Additions)
 - (UIImage *)scaleToSize:(CGSize)targetSize;
 @end
+
+@interface UIImage (quartz)
+- (unsigned char*)colorOfPointInImage:(CGPoint)point;
+@end

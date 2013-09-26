@@ -36,3 +36,24 @@
 
 
 @end
+
+@implementation UIImage (quartz)
+
+- (unsigned char*)colorOfPointInImage:(CGPoint)pt
+{
+    unsigned char *pixel = malloc(sizeof(unsigned char)*4);
+    
+    CGDataProviderRef provider = CGImageGetDataProvider(self.CGImage);
+    CFDataRef pixelData = CGDataProviderCopyData(provider);
+    const UInt8* data = CFDataGetBytePtr(pixelData);
+    int pixelInfo = ((CGImageGetWidth(self.CGImage) * pt.y) + pt.x) * 4; // The image is png
+    pixel[0] = data[pixelInfo];
+    pixel[1] = data[pixelInfo + 1];
+    pixel[2] = data[pixelInfo + 2];
+    pixel[3] = data[pixelInfo + 3];
+    CFRelease(pixelData);
+    return pixel;
+}
+
+@end
+
