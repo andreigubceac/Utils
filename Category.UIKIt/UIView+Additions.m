@@ -1,8 +1,17 @@
 #import "UIView+Additions.h"
 
 @implementation UIView (Additions)
+
 - (void)adjustContentSize
 {
+    if ([self respondsToSelector:@selector(setText:)])
+    {
+        CGSize s = [[(UILabel*)self text] sizeWithFont:[(UILabel*)self font]
+                                     constrainedToSize:CGSizeMake(self.width, 10000) lineBreakMode:[(UILabel*)self lineBreakMode]];
+        self.size = s;
+        return;
+    }
+    
     UIView *_v = [self.subviews objectAtIndex:0];
     _v.top = 0;
     for (unsigned i = 1; i < [self.subviews count]; i++) {
@@ -11,6 +20,11 @@
         _v = _v1;
     }
     self.height = _v.bottom;
+    if ([self respondsToSelector:@selector(setContentSize:)])
+    {
+        _v = [self.subviews lastObject];
+        [(UIScrollView*)self setContentSize:(CGSize){self.width, _v.bottom}];
+    }
 }
 
 - (void)makeHorizontalCarousel

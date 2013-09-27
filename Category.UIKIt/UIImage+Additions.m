@@ -39,6 +39,16 @@
 
 @implementation UIImage (quartz)
 
++ (UIImage*)pointImageWithColor:(UIColor*)c
+{
+    UIGraphicsBeginImageContext(CGSizeMake(1, 1));
+    CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), c.CGColor);
+    CGContextFillRect(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, 1, 1));
+    UIImage *_img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return _img;
+}
+
 - (unsigned char*)colorOfPointInImage:(CGPoint)pt
 {
     unsigned char *pixel = malloc(sizeof(unsigned char)*4);
