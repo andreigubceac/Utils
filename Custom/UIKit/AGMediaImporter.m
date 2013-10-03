@@ -7,15 +7,14 @@
 
 #import "AGMediaImporter.h"
 
-@interface AGMediaImporter ()<UIActionSheetDelegate>
+@interface AGMediaImporterSheet ()<UIActionSheetDelegate>
 @property (nonatomic,copy) void (^successBock)(UIImagePickerControllerWithBlocks*,id);
 @property (nonatomic,copy) void (^cancelBlock)();
 @property (nonatomic,strong) UIViewController *viewController;
 @end
 
-static AGMediaImporter *delegate;
 
-@implementation AGMediaImporter
+@implementation AGMediaImporterSheet
 @synthesize successBock, cancelBlock;
 @synthesize viewController;
 
@@ -24,18 +23,18 @@ static AGMediaImporter *delegate;
                           fromViewController:(UIViewController*)viewc
                    canRemoveTheExistingPhoto:(BOOL)remove
 {
-    delegate = [[AGMediaImporter alloc] init];
+    AGMediaImporterSheet *delegate = [AGMediaImporterSheet alloc];
     delegate.viewController = viewc;
     delegate.successBock = successBock;
     delegate.cancelBlock = cancelBlock;
     if (viewc.tabBarController)
     {
-        [[[UIActionSheet alloc] initWithTitle:nil delegate:delegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:(remove?@"Delete":nil)
-                            otherButtonTitles:@"From Library",([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]?@"Take Photo":nil), nil] showFromTabBar:viewc.tabBarController.tabBar];
+        [[delegate initWithTitle:nil delegate:delegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:(remove?@"Delete":nil)
+               otherButtonTitles:@"From Library",([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]?@"Take Photo":nil), nil] showFromTabBar:viewc.tabBarController.tabBar];
     }
     else
-        [[[UIActionSheet alloc] initWithTitle:nil delegate:delegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:(remove?@"Delete":nil)
-                            otherButtonTitles:@"From Library",([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]?@"Take Photo":nil), nil] showInView:viewc.view];
+        [[delegate initWithTitle:nil delegate:delegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:(remove?@"Delete":nil)
+               otherButtonTitles:@"From Library",([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]?@"Take Photo":nil), nil] showInView:viewc.view];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -68,7 +67,8 @@ static AGMediaImporter *delegate;
             }];
         };
     }
-    delegate = nil;
+    else if (self.cancelBlock)
+        self.cancelBlock();
 }
 
 @end
