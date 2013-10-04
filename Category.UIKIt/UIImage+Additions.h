@@ -14,4 +14,5 @@
 @interface UIImage (quartz)
 + (UIImage*)pointImageWithColor:(UIColor*)c;
 - (unsigned char*)colorOfPointInImage:(CGPoint)point;
+- (UIImage*)imageWithMaskColorForPoint:(CGPoint)point;
 @end

@@ -65,5 +65,25 @@
     return pixel;
 }
 
+- (UIImage*)imageWithMaskColorForPoint:(CGPoint)point
+{
+    unsigned char *selectedColor = [self colorOfPointInImage:point];
+    float components[6] =  {selectedColor[1]-5,selectedColor[1]+5, selectedColor[2]-5, selectedColor[2]+5,selectedColor[3]-5, selectedColor[3]+5};
+    CGContextRef bitmap = CGBitmapContextCreate(NULL,
+                                                CGImageGetWidth(self.CGImage),
+                                                CGImageGetHeight(self.CGImage),
+                                                CGImageGetBitsPerComponent(self.CGImage),
+                                                CGImageGetBytesPerRow(self.CGImage),
+                                                CGImageGetColorSpace(self.CGImage),
+                                                kCGImageAlphaNoneSkipFirst);
+    CGContextDrawImage(bitmap, CGRectMake(0, 0, CGImageGetWidth(self.CGImage), CGImageGetHeight(self.CGImage)), self.CGImage);
+    CGImageRef newImageRef = CGBitmapContextCreateImage(bitmap);
+    CGImageRef img = CGImageCreateWithMaskingColors(newImageRef, components);
+    CGImageRelease(newImageRef);
+    CGContextRelease(bitmap);
+    UIImage *_img = [UIImage imageWithCGImage:img];
+    CGImageRelease(img);
+    return _img;
+}
 @end
 
