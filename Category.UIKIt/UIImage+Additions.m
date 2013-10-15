@@ -49,6 +49,19 @@
     return _img;
 }
 
++ (UIImage *)captureView:(UIView *)view
+{
+    UIGraphicsBeginImageContext([view bounds].size);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    [[UIColor blackColor] set];
+    CGContextFillRect(ctx, [view bounds]);
+    [view.layer renderInContext:ctx];
+    UIImage *_img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    ctx = nil;
+    return _img;
+}
+
 - (unsigned char*)colorOfPointInImage:(CGPoint)pt
 {
     unsigned char *pixel = malloc(sizeof(unsigned char)*4);
