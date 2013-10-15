@@ -15,4 +15,5 @@
 + (UIImage*)pointImageWithColor:(UIColor*)c;
 - (unsigned char*)colorOfPointInImage:(CGPoint)point;
 - (UIImage*)imageWithMaskColorForPoint:(CGPoint)point;
+- (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
 @end
