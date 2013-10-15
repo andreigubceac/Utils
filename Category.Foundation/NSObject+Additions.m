@@ -26,3 +26,12 @@
     return _appVersion;
 }
 @end
+
+@implementation NSObject (json)
+
+- (void)updateFromJson:(id)o{}
+
+- (id)jsonObject{return nil;}
+
+@end
+

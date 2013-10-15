@@ -17,3 +17,8 @@
 inline static id nilToNull(id obj)  {return (obj == nil) ? [NSNull null] : obj;}
 
 inline static id nullToNil(id obj)  {return ([obj isKindOfClass:[NSNull class]] ? nil : obj);}
+
+@interface NSObject (json)
+- (void)updateFromJson:(id)o;
+- (id)jsonObject;
+@end

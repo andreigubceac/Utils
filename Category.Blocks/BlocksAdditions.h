@@ -4,6 +4,7 @@ typedef void (^BasicBlock)(void);
 typedef void (^SuccessBlock)(id res);
 typedef void (^ResultBlock)(id res);
 typedef void (^ErrorBlock)(NSString *err);
+typedef void (^CommunicationErrorBlock)(NSInteger code, NSError* errObj);
 
 
 void InBackground(BasicBlock block);
