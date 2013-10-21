@@ -18,4 +18,17 @@
         block();
     return YES;
 }
+
+- (void)updateLeftAccessoryImage:(UIImage*)image
+{
+    if ([self.leftView isKindOfClass:[UIImageView class]] == NO)
+    {
+        self.leftView = [[UIImageView alloc] initWithImage:image];
+        self.leftView.contentMode = UIViewContentModeCenter;
+        self.leftViewMode = UITextFieldViewModeAlways;
+        self.leftView.width += 10;
+    }
+    else
+        [(UIImageView*)self.leftView setImage:image];
+}
 @end

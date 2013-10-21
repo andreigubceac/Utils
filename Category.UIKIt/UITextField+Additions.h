@@ -9,4 +9,5 @@
 
 @interface UITextField (Additions)
 - (BOOL)resignFirstResponderAndMoveToNextFieldWithDoneBlock:(void(^)(void))block;
+- (void)updateLeftAccessoryImage:(UIImage*)image;
 @end
