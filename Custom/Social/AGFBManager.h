@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <FacebookSDK/FacebookSDK.h>
+#import <Facebook.h>
 
 @interface AGFBManager : NSObject
 @property (nonatomic, readonly, strong) id<FBGraphUser> me;
@@ -17,7 +17,8 @@
 - (BOOL)isLogged;
 - (void)logout;
 
-- (void)authorizeToGetInfoAboutMeWithCompleteBlock:(void(^)(id<FBGraphUser>, NSError*))cblock;
+- (void)authorizeToGetInfoAboutMe:(NSArray*)params//pass nil to use only email
+                withCompleteBlock:(void(^)(id<FBGraphUser>, NSError*))cblock;
 - (void)shareFeedWithDictionary:(id)pd withCompletBlock:(void(^)(NSError*))cblock;
 - (void)sendAppRequestTo:(NSArray*)profile_ids message:(NSString*)message withCompletBlock:(void(^)(bool, NSError*))cblock;
 

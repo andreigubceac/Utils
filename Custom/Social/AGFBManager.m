@@ -13,7 +13,6 @@
 @end
 
 @implementation AGFBManager
-@synthesize me = _me;
 
 - (id)init
 {
@@ -76,7 +75,7 @@
                 //we don't actually need to inspect renewResult or error.
                 if (cblock)
                 {
-                    OnMainThread(NO, ^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         cblock(error);
                     });
                 }
@@ -91,7 +90,7 @@
 }
 
 
-- (void)authorizeToGetInfoAboutMeWithCompleteBlock:(void(^)(id<FBGraphUser>, NSError*))cblock
+- (void)authorizeToGetInfoAboutMe:(NSArray*)params withCompleteBlock:(void(^)(id<FBGraphUser>, NSError*))cblock
 {
     if ([[FBSession activeSession] isOpen])
     {
@@ -111,16 +110,15 @@
     }
     else
     {
-        if (![FBSession openActiveSessionWithReadPermissions:@[@"email"] allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
-			
-			[self authorizeToGetInfoAboutMeWithCompleteBlock:cblock];
-            
-		}])
-			
-            [FBSession openActiveSessionWithReadPermissions:@[@"email"] allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+        if (![FBSession openActiveSessionWithReadPermissions:(params.count?params:@[@"email"])
+                                                allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+                                                    [self authorizeToGetInfoAboutMe:params withCompleteBlock:cblock];
+                                                }])
+            [FBSession openActiveSessionWithReadPermissions:(params.count?params:@[@"email"])
+                                               allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
                 switch (status) {
                     case FBSessionStateOpen:
-                    case FBSessionStateOpenTokenExtended:[self authorizeToGetInfoAboutMeWithCompleteBlock:cblock];
+                    case FBSessionStateOpenTokenExtended:[self authorizeToGetInfoAboutMe:params withCompleteBlock:cblock];
                         break;
                     case FBSessionStateCreatedOpening:[[FBSession activeSession] handleDidBecomeActive];
                         break;
@@ -149,23 +147,10 @@
     }
 }
 
-//- (void)postMessage:(NSString*)msg withPhoto:(UIImage*)photo photolink:(NSString*)plink url:(NSString*)url withCompletBlock:(void(^)(NSError*))cblock
 - (void)shareFeedWithDictionary:(id)pd withCompletBlock:(void(^)(NSError*))cblock
 {
     if ([[FBSession activeSession] isOpen])
     {
-        //		if (photo) {
-        //			//Image post flow. First upload the photo and then make a new post.
-        //			[FBRequestConnection startWithGraphPath:@"me/photos"
-        //										 parameters:@{@"source": photo, @"message" : msg, @"link" : url}
-        //										 HTTPMethod:@"POST"
-        //								  completionHandler:^(FBRequestConnection *connection, FBGraphObject *result, NSError *error)
-        //			 {
-        //                     if (cblock)
-        //                         cblock(error);
-        //			 }];
-        //		}
-        //		else {
         void (^shareBlock)();
         FBShareDialogParams *_sdp = [[FBShareDialogParams alloc] init];
         _sdp.caption= pd[@"caption"];
@@ -215,7 +200,7 @@
     }
     else
     {
-        [self authorizeToGetInfoAboutMeWithCompleteBlock:^(id<FBGraphUser>user,NSError*err) {
+        [self authorizeToGetInfoAboutMe:nil withCompleteBlock:^(id<FBGraphUser>user,NSError*err) {
             if (user)
                 [self shareFeedWithDictionary:pd withCompletBlock:cblock];
         }];
