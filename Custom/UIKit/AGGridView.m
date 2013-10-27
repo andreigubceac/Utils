@@ -65,9 +65,6 @@
     _totalNumberOfRows = self.totalNumberOfRowsBlock();
     [super reloadData];
 }
-@end
-
-@implementation AGGridView (UITableView)
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
