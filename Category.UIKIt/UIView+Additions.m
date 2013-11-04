@@ -8,7 +8,7 @@
     {
         CGSize s = [[(UILabel*)self text] sizeWithFont:[(UILabel*)self font]
                                      constrainedToSize:CGSizeMake(self.width, 10000) lineBreakMode:[(UILabel*)self lineBreakMode]];
-        self.size = s;
+        self.height = s.height;
         return;
     }
     
