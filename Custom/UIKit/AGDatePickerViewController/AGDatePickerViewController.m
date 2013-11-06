@@ -59,4 +59,35 @@
     _datePicker.maximumDate = maxDate_;
 }
 
+- (void)showViewFromViewController:(UIViewController*)viewController animated:(BOOL)animated
+{
+    [viewController addChildViewController:self];
+    [viewController.view addSubview:self.view];
+    if (animated)
+    {
+        self.view.top = self.view.superview.height;
+        [UIView animateWithDuration:.25 animations:^{
+            self.view.top = 0;
+        }];
+    }
+}
+
+- (void)hideViewAnimated:(BOOL)animated
+{
+    if (animated)
+    {
+        [UIView animateWithDuration:.25 animations:^{
+            self.view.top = self.view.superview.height;
+        } completion:^(BOOL finished) {
+            [self.view removeFromSuperview];
+            [self removeFromParentViewController];
+        }];
+    }
+    else
+    {
+        [self.view removeFromSuperview];
+        [self removeFromParentViewController];
+    }
+}
+
 @end
