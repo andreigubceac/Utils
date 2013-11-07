@@ -11,7 +11,7 @@
 @end
 
 @implementation UIImagePickerControllerWithBlocks
-@synthesize didFinishPickingMediaWithInfoBlock, didCancelBlock;
+
 - (id)init
 {
     self = [super init];
@@ -47,17 +47,11 @@
         self.didFinishPickingMediaWithInfoBlock(self,info);
 }
 
-+ (UIImage*)getImageFromInfo:(NSDictionary*)info
++ (UIImage*)imageFromInfo:(NSDictionary*)info
 {
     if ([info valueForKey:UIImagePickerControllerEditedImage])
         return [info valueForKey:UIImagePickerControllerEditedImage];
     return [info valueForKey:UIImagePickerControllerOriginalImage];
-}
-
-+ (UIImage*)getPreviewFromInfo:(NSDictionary*)info
-{
-//    return [[[self class] getImageFromInfo:info] thumbnailImage:kThumbnailSize transparentBorder:0 cornerRadius:5 interpolationQuality:kCGInterpolationMedium];
-    return nil;
 }
 
 @end

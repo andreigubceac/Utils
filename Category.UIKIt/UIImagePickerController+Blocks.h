@@ -10,6 +10,5 @@
 @interface UIImagePickerControllerWithBlocks : UIImagePickerController
 @property (nonatomic, copy) void (^didFinishPickingMediaWithInfoBlock)(UIImagePickerControllerWithBlocks*v,NSDictionary*d);
 @property (nonatomic, copy) void (^didCancelBlock)(UIImagePickerControllerWithBlocks*v);
-+ (UIImage*)getImageFromInfo:(NSDictionary*)info;
-+ (UIImage*)getPreviewFromInfo:(NSDictionary*)info;
++ (UIImage*)imageFromInfo:(NSDictionary*)info;
 @end
