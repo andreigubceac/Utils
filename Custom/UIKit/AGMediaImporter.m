@@ -49,7 +49,7 @@
         if (actionSheet.destructiveButtonIndex != -1)
             buttonIndex--;
         UIImagePickerControllerWithBlocks *picker = [[UIImagePickerControllerWithBlocks alloc] init];
-        picker.allowsEditing = YES;
+        picker.allowsEditing = NO;
         picker.sourceType = (buttonIndex==0?UIImagePickerControllerSourceTypePhotoLibrary:UIImagePickerControllerSourceTypeCamera);
         [self.viewController presentViewController:picker animated:YES completion:nil];
         picker.didCancelBlock = ^(UIImagePickerControllerWithBlocks *picker_)
