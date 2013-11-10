@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 
 @interface AGModalView : UIView
-@property (nonatomic, copy) void(^completeBlock)();
+@property (nonatomic, copy) void(^completeBlock)(id info);
 
 - (void)showAnimated:(BOOL)animated;
 - (void)hideAnimated:(BOOL)animated;

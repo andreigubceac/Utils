@@ -9,13 +9,6 @@
 
 @implementation AGModalView
 
-- (void)removeFromSuperview
-{
-    [super removeFromSuperview];
-    if (self.completeBlock)
-        self.completeBlock();
-}
-
 - (void)showAnimated:(BOOL)animated
 {
     if (self.superview)
