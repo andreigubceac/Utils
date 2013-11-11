@@ -22,11 +22,13 @@
                              withCancelBlock:(void(^)(void))cancelBlock
                           fromViewController:(UIViewController*)viewc
                    canRemoveTheExistingPhoto:(BOOL)remove
+                                  allowEding:(BOOL)edit
 {
     AGMediaImporterSheet *delegate = [AGMediaImporterSheet alloc];
     delegate.viewController = viewc;
     delegate.successBock = successBock;
     delegate.cancelBlock = cancelBlock;
+    delegate.tag = edit;
     if (viewc.tabBarController)
     {
         [[delegate initWithTitle:nil delegate:delegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:(remove?@"Delete":nil)
@@ -49,7 +51,7 @@
         if (actionSheet.destructiveButtonIndex != -1)
             buttonIndex--;
         UIImagePickerControllerWithBlocks *picker = [[UIImagePickerControllerWithBlocks alloc] init];
-        picker.allowsEditing = NO;
+        picker.allowsEditing = actionSheet.tag;
         picker.sourceType = (buttonIndex==0?UIImagePickerControllerSourceTypePhotoLibrary:UIImagePickerControllerSourceTypeCamera);
         [self.viewController presentViewController:picker animated:YES completion:nil];
         picker.didCancelBlock = ^(UIImagePickerControllerWithBlocks *picker_)

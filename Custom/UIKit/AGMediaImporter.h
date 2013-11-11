@@ -8,5 +8,9 @@
 #import "UIImagePickerController+Blocks.h"
 
 @interface AGMediaImporterSheet : UIActionSheet
-+ (void)showMediaImporterMenuWithSuccesBlock:(void(^)(UIImagePickerControllerWithBlocks* picker, id info))successBock withCancelBlock:(void(^)(void))cancelBlock fromViewController:(UIViewController*)viewc canRemoveTheExistingPhoto:(BOOL)remove;
++ (void)showMediaImporterMenuWithSuccesBlock:(void(^)(UIImagePickerControllerWithBlocks* picker, id info))successBock
+                             withCancelBlock:(void(^)(void))cancelBlock
+                          fromViewController:(UIViewController*)viewc
+                   canRemoveTheExistingPhoto:(BOOL)remove
+                                  allowEding:(BOOL)edit;
 @end
