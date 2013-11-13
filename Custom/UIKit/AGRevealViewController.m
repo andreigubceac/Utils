@@ -86,8 +86,8 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
             
             if (nil == _noUserInteractionView)
             {
-                _noUserInteractionView = [[UIView alloc] initWithFrame:_centerView.bounds];
-                [_centerView addSubview:_noUserInteractionView];
+                _noUserInteractionView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+                [_centerViewController.view addSubview:_noUserInteractionView];
                 [_noUserInteractionView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeAction:)]];
                 [self.view removeGestureRecognizer:_panGesture];
                 [_noUserInteractionView addGestureRecognizer:_panGesture];
