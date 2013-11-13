@@ -53,7 +53,7 @@
     return _al;
 }
 
-+ (UIAlertView*)alertViewWithTitle:(NSString*)title message:(NSString*)message cancelButtonTitle:(NSString*)cbtitle okButtonTitle:(NSString*)oktitle inputText:(NSString*)inputMessage placeHolder:(NSString*)placeholder autoFocus:(BOOL)autofocus secureText:(BOOL)secure okBlock:(void(^)(UIAlertView*, NSInteger, NSString *))block
++ (UIAlertView*)alertViewWithTitle:(NSString*)title message:(NSString*)message cancelButtonTitle:(NSString*)cbtitle okButtonTitle:(NSString*)oktitle inputText:(NSString*)inputMessage placeHolder:(NSString*)placeholder autoFocus:(BOOL)autofocus secureText:(BOOL)secure actionBlock:(void(^)(UIAlertView*, NSInteger, NSString *))block
 {
     UIAlertViewWithBlocks *alertView = [UIAlertViewWithBlocks alloc];
     alertView = [alertView initWithTitle:title message:message delegate:alertView cancelButtonTitle:cbtitle otherButtonTitles:oktitle, nil];
