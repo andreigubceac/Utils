@@ -32,9 +32,7 @@
 
 - (NSString*)accessToken
 {
-    if ([FBSession activeSession].state == FBSessionStateOpen)
-        return [FBSession activeSession].accessTokenData.accessToken;
-    return nil;
+    return [FBSession activeSession].accessTokenData.accessToken;;
 }
 
 - (BOOL)handleOpenURL:(NSURL*)url
