@@ -112,7 +112,7 @@
 
 + (AGRestClient *)restClientWithBaseURLString:(NSString *)aBaseURLString
 {
-    AGRestClient *webClient = [[AGRestClient alloc] init];
+    AGRestClient *webClient = [[[self class] alloc] init];
     [webClient setBaseURLString:aBaseURLString];
     return webClient;
 }
