@@ -364,7 +364,7 @@ static int maxConnectionInprogress = 10;
     NSMutableURLRequest *_req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",self.baseURLString,urlPath]]];
     [_req setHTTPMethod:@"PATCH"];
     if (queryParams)
-        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:[queryParams dictionaryWithNullValuesRemoved] options:NSJSONReadingAllowFragments error:nil]];
+        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:[queryParams dictionaryWithNullValuesRemoved] options:NSJSONWritingPrettyPrinted error:nil]];
     return [self doJSONRequest:_req withSessionId:withSessionId successBlock:successBlock errorBlock:errorBlock completeBlock:completeBlock];
 }
 
