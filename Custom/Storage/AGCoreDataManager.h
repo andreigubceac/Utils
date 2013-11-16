@@ -1,0 +1,24 @@
+//
+//  AGCoreDataManager.h
+//
+//  Created by Andrei Gubceac on 11/16/13.
+//  Copyright (c) 2013. All rights reserved.
+//
+
+#import <CoreData/CoreData.h>
+
+@interface AGCoreDataManager : NSObject
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *backgroundContext;
+
+- (void)saveContext:(NSManagedObjectContext*)context;
+- (void)saveContext;
+- (void)saveBackgroundContext;
+
+- (NSManagedObjectContext*)importContext;
+
+- (NSURL *)applicationDocumentsDirectory;
+
+@end
