@@ -22,3 +22,9 @@
 - (NSURL *)applicationDocumentsDirectory;
 
 @end
+
+#ifdef DEBUG
+#define AGLog(...) NSLog(@"%s@%i: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:__VA_ARGS__])
+#else
+#define AGLog(...)
+#endif

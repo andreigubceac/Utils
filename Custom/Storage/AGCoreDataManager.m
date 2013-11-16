@@ -79,9 +79,9 @@
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        DLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        AGLog(@"Unresolved error %@, %@", error, [error userInfo]);
         //        abort();
-        DLog(@"DELETING Old Store: %d",[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]);
+        AGLog(@"DELETING Old Store: %d",[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]);
         _persistentStoreCoordinator = nil;
         _persistentStoreCoordinator = self.persistentStoreCoordinator;
     }
@@ -144,7 +144,7 @@
         BOOL saved = [context save:&error];
         if (!saved) {
             // do some real error handling
-            DLog(@"Could not save context due to %@", error);
+            AGLog(@"Could not save context due to %@", error);
             abort();
         }
     }];
@@ -160,7 +160,7 @@
 								   toModel:[self managedObjectModel]
 									 error:&error])
 		{
-			DLog(@"%@",error);
+			AGLog(@"%@",error);
 		}
 	}
 }

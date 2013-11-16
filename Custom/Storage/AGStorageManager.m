@@ -6,6 +6,7 @@
 //
 
 #import "AGStorageManager.h"
+#import "NSObject+Additions.h"
 
 NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
@@ -31,7 +32,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
 - (void)removeJSONDataRecordsDirectory
 {
-    DLog(@"%d",[[NSFileManager defaultManager] removeItemAtURL:[self JSONDataRecordsDirectory] error:nil]);
+    AGLog(@"%d",[[NSFileManager defaultManager] removeItemAtURL:[self JSONDataRecordsDirectory] error:nil]);
 }
 
 - (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier
@@ -44,12 +45,12 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     
     if (![[records nullFreeRecords] writeToFile:[fileURL path] atomically:YES]) {
         NSAssert(false, @"fail");
-        DLog(@"Failed all attempts to save reponse to disk: %@", response);
+        AGLog(@"Failed all attempts to save reponse to disk: %@", response);
     } else {
         NSNumber *file_size = nil;
         NSError *err = nil;
         [fileURL getResourceValue:&file_size forKey:NSURLFileSizeKey error:&err];
-        DLog(@"FileSize for %@: %@ [%@]", identifier, file_size, [fileURL path]);
+        AGLog(@"FileSize for %@: %@ [%@]", identifier, file_size, [fileURL path]);
     }
 }
 
@@ -58,7 +59,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     NSError *error = nil;
     BOOL deleted = [[NSFileManager defaultManager] removeItemAtURL:url error:&error];
     if (!deleted) {
-        DLog(@"Unable to delete JSON Records at %@, reason: %@", url, error);
+        AGLog(@"Unable to delete JSON Records at %@, reason: %@", url, error);
     }
 }
 
@@ -158,7 +159,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
             NSArray *stored_objects = [storedRecords filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id = %@", @([record[@"id"] intValue])]];
             if (stored_objects.count > 1) {
                 for (NSManagedObject *managed_obj in [stored_objects subarrayWithRange:NSMakeRange(1, stored_objects.count - 1)]) {
-                    DLog(@"DUPLICATE: %@", managed_obj);
+                    AGLog(@"DUPLICATE: %@", managed_obj);
                     [managedObjectContext deleteObject:managed_obj];
                 }
             } else if (stored_objects.count > 0) {

@@ -11,6 +11,11 @@
 #import "NSDictionary+Additions.h"
 #import "NSString+Additions.h"
 
+#ifdef DEBUG
+#define ULog(...) NSLog(@"%s@%i: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:__VA_ARGS__])
+#else
+#define ULog(...)
+#endif
 
 @interface AGSession : NSObject;
 @property (atomic, readonly) NSString *auth_token, *user_id;
@@ -280,7 +285,7 @@ static int maxConnectionInprogress = 10;
 #if DEBUG
             NSString *_body = nil;
             _body = [[NSString alloc] initWithData: connection.originalRequest.HTTPBody encoding:NSUTF8StringEncoding];
-            DLog(@"Start urlconnection : %@ : %@ : %@",connection.originalRequest, connection.originalRequest.HTTPMethod,_body);
+            ULog(@"Start urlconnection : %@ : %@ : %@",connection.originalRequest, connection.originalRequest.HTTPMethod,_body);
 #endif
         }
         else
@@ -302,7 +307,7 @@ static int maxConnectionInprogress = 10;
         NSError *jsonError = nil;
         id res = [NSJSONSerialization JSONObjectWithData:resBody options:NSJSONReadingAllowFragments error:&jsonError];
         if (nil != res) {
-            DLog(@"resStr: %@", res);
+            ULog(@"resStr: %@", res);
             successBlock(res);
             /*
              NSString *serverOk = [res valueForKey:@"result"];
@@ -318,7 +323,7 @@ static int maxConnectionInprogress = 10;
         else
             errorBlock([jsonError code], jsonError );
     } errorBlock:^(NSInteger code, id errObj){
-        DLog(@"%@",errObj);
+        ULog(@"%@",errObj);
         errorBlock(code,errObj);
     } completeBlock:completeBlock];
 }
@@ -339,7 +344,7 @@ static int maxConnectionInprogress = 10;
     NSMutableURLRequest *_req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",self.baseURLString,urlPath]]];
     [_req setHTTPMethod:@"POST"];
     if (queryParams)
-        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:queryParams options:NSJSONReadingAllowFragments error:nil]];
+        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:queryParams options:NSJSONWritingPrettyPrinted error:nil]];
     return [self doJSONRequest:_req withSessionId:withSessionId successBlock:successBlock errorBlock:errorBlock completeBlock:completeBlock];
 }
 
@@ -349,7 +354,7 @@ static int maxConnectionInprogress = 10;
     NSMutableURLRequest *_req = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",self.baseURLString,urlPath]]];
     [_req setHTTPMethod:@"PUT"];
     if (queryParams)
-        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:queryParams options:NSJSONReadingAllowFragments error:nil]];
+        [_req setHTTPBody:[NSJSONSerialization dataWithJSONObject:queryParams options:NSJSONWritingPrettyPrinted error:nil]];
     return [self doJSONRequest:_req withSessionId:withSessionId successBlock:successBlock errorBlock:errorBlock completeBlock:completeBlock];
 }
 
