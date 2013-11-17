@@ -11,8 +11,9 @@ const NSString *_key = @"e3aebbbb4w22caasjxkpcs6v";
 
 @interface AGWeatherManager ()
 {
-    BOOL _inPogress, _inProgressLocation;
+    NSMutableDictionary *_connectionInProgress, *_connectionsInPendding;
     NSMutableArray *_weatherObjects;
+    NSCache *_weatherIcons;
     id _location;
     NSTimer *_resetTimer;
 }
@@ -27,24 +28,37 @@ const NSString *_key = @"e3aebbbb4w22caasjxkpcs6v";
     {
         _weatherObjects = [NSMutableArray array];
         _location = [NSMutableDictionary dictionary];
+        _weatherIcons   = [[NSCache alloc] init];
         _resetTimer = [NSTimer scheduledTimerWithTimeInterval:3600 target:self selector:@selector(resetData:) userInfo:nil repeats:YES];
+        _connectionInProgress   = [[NSMutableDictionary alloc] init];
+        _connectionsInPendding  = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [_weatherIcons removeAllObjects];
+    _weatherIcons = nil;
     [_weatherObjects removeAllObjects];
     _weatherObjects = nil;
     [_resetTimer invalidate];
     _resetTimer = nil;
 }
 
+- (void)cancelAllInProgressConnections
+{
+    [[_connectionInProgress allValues] makeObjectsPerformSelector:@selector(cancel) withObject:nil];
+    [_connectionInProgress removeAllObjects];
+    [[_connectionsInPendding allValues] makeObjectsPerformSelector:@selector(cancel) withObject:nil];
+    [_connectionsInPendding removeAllObjects];
+}
+
 - (void)resetData:(id)t
 {
     [_weatherObjects removeAllObjects];
     [_location removeAllObjects];
-    _inProgressLocation = _inPogress = NO;
+    [self cancelAllInProgressConnections];
 }
 
 - (NSString*)weatherConditionForCode:(NSNumber*)code
@@ -61,108 +75,152 @@ const NSString *_key = @"e3aebbbb4w22caasjxkpcs6v";
     return nil;
 };
 
+static int maxConnectionInprogress = 10;
+
+- (BOOL)isInProgressConnectionForPath:(NSString*)absoluteString
+{
+    NSString *_connectionKey = [absoluteString copy];
+    return ([_connectionInProgress objectForKey:_connectionKey] || [_connectionsInPendding objectForKey:_connectionKey]);
+}
 
 - (void)weatherDataForNextDays:(NSUInteger)nextNrDays forCoordinates:(CLLocationCoordinate2D)coordinates
-                 completeBlock:(ResultBlock)cblock errorBlock:(ErrorBlock)errorBlock
+                 completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock
 {
-    if (_inPogress)
+    if ([_weatherObjects count])
+    {
+        if (cblock)
+            cblock(_weatherObjects);
         return;
-    else if ([_weatherObjects count])
-        cblock(_weatherObjects);
-    
+    }
     if (CLLocationCoordinate2DIsValid(coordinates) == NO)
     {
         if (errorBlock)
-            errorBlock(@"Invalid coordinates");
+            errorBlock(400, [NSError errorWithDomain:@"CoreLocation" code:400 userInfo:@{NSLocalizedDescriptionKey :@"Invalide geo coordinates"}]);
         return;
     }
-    _inPogress = YES;
-    dispatch_queue_t queue = dispatch_queue_create("com.123dressme.weater", 0);
-    dispatch_async(queue, ^{
-        NSError *_err = nil;
-        NSData *_jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/weather.ashx?q=%f,%f&format=json&num_of_days=%d&key=%@",coordinates.latitude,coordinates.longitude,nextNrDays,_key]]
-                                                  options:NSDataReadingMapped
-                                                    error:&_err];
-        if (_err == nil)
+    
+    NSString *_connectionKey = [NSString stringWithFormat:@"q=%f,%f",coordinates.latitude,coordinates.longitude];
+    if ([self isInProgressConnectionForPath:_connectionKey])
+    {
+        return ;
+    }
+
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/weather.ashx?%@&format=json&num_of_days=%d&key=%@",_connectionKey,nextNrDays,_key]]];
+    __block NSURLConnectionWithBlocks *connection = nil;
+    connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
+                                                     successBlock:^(NSHTTPURLResponse *res, NSData *resBody){
+                                                         NSError *jsonError = nil;
+                                                         NSDictionary *_json = [NSJSONSerialization JSONObjectWithData:resBody
+                                                                                                               options:NSJSONReadingAllowFragments
+                                                                                                                 error:&jsonError];
+                                                         if (jsonError == nil)
+                                                         {
+                                                             [_weatherObjects removeAllObjects];
+                                                             [_weatherObjects addObjectsFromArray:[_json valueForKey:@"data"][@"weather"]];
+                                                             cblock(_weatherObjects);
+                                                         }
+                                                     }
+                                                   httpErrorBlock:nil
+                                                       errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
+                                                    completeBlock:^(NSURLConnection*_connection){
+                                                        [_connectionInProgress removeObjectForKey:_connectionKey];
+                                                        if ([_connectionInProgress allValues].count == 0)
+                                                        {
+                                                            for (unsigned i=0;i<maxConnectionInprogress&&i<[[_connectionsInPendding allValues] count];i++)
+                                                            {
+                                                                NSURLConnectionWithBlocks *conn = [[_connectionsInPendding allValues] objectAtIndex:i];
+                                                                [_connectionInProgress setValue:conn forKey:conn.identifier];
+                                                                [_connectionsInPendding removeObjectForKey:conn.identifier];
+                                                                [conn start];
+                                                            }
+                                                        }
+                                                    }];
+    if (connection)
+    {
+        connection.identifier = _connectionKey;
+        if ([_connectionInProgress allValues].count < maxConnectionInprogress)
         {
-            NSDictionary *_json = [NSJSONSerialization JSONObjectWithData:_jsonData
-                                                                  options:NSJSONReadingAllowFragments
-                                                                    error:&_err];
-            if (_err == nil)
-            {
-                [_weatherObjects removeAllObjects];
-                [_weatherObjects addObjectsFromArray:[_json valueForKey:@"data"][@"weather"]];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    cblock(_weatherObjects);
-                });
-            }
-            else if (errorBlock)
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    errorBlock([_err localizedDescription]);
-                });
+            [_connectionInProgress setValue:connection forKey:_connectionKey];
+            [connection start];
         }
-        else if (errorBlock)
-            dispatch_async(dispatch_get_main_queue(), ^{
-                errorBlock([_err localizedDescription]);
-            });
-        _inPogress = NO;
-    });
+        else
+            [_connectionsInPendding setValue:connection forKey:_connectionKey];
+    }
 }
 
 - (void)locationDataForCoordinates:(CLLocationCoordinate2D)coordinates
-                     completeBlock:(ResultBlock)cblock errorBlock:(ErrorBlock)errorBlock
+                     completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock
 {
-    if (_inProgressLocation)
+    if ([_location count])
+    {
+        if (cblock)
+            cblock(_location);
         return;
-    else if ([_location count])
-        cblock(_location);
-    
+    }
     if (CLLocationCoordinate2DIsValid(coordinates) == NO)
     {
         if (errorBlock)
-            errorBlock(@"Invalid coordinates");
+            errorBlock(400, [NSError errorWithDomain:@"CoreLocation" code:400 userInfo:@{NSLocalizedDescriptionKey :@"Invalide geo coordinates"}]);
         return;
     }
-    _inProgressLocation = YES;
-    dispatch_queue_t queue = dispatch_queue_create("com.123dressme.location", 0);
-    dispatch_async(queue, ^{
-        NSError *_err = nil;
-        NSData *_jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/search.ashx?q=%f,%f&format=json&num_of_results=1&key=%@",coordinates.latitude,coordinates.longitude, _key]]
-                                                  options:NSDataReadingMapped
-                                                    error:&_err];
-        if (_err == nil)
+    
+    NSString *_connectionKey = [[NSValue valueWithMKCoordinate:coordinates] description];
+
+    if ([self isInProgressConnectionForPath:_connectionKey])
+    {
+        return ;
+    }
+    
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/search.ashx?q=%f,%f&format=json&num_of_results=1&key=%@",coordinates.latitude,coordinates.longitude, _key]]];
+    __block NSURLConnectionWithBlocks *connection = nil;
+    connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
+                                                     successBlock:^(NSHTTPURLResponse *res, NSData *_jsonData){
+                                                         NSError *_err = nil;
+                                                         NSDictionary *_json = [NSJSONSerialization JSONObjectWithData:_jsonData
+                                                                                                               options:NSJSONReadingAllowFragments
+                                                                                                                 error:&_err];
+                                                         if (_err == nil)
+                                                         {
+                                                             id _locObject = [_json[@"search_api"][@"result"] lastObject];
+                                                             if (_locObject)
+                                                             {
+                                                                 [_location removeAllObjects];
+                                                                 [_location setValue:[_locObject[@"areaName"] lastObject][@"value"] forKey:@"areaName"];
+                                                                 [_location setValue:[_locObject[@"region"] lastObject][@"value"] forKey:@"region"];
+                                                                 [_location setValue:[_locObject[@"country"] lastObject][@"value"] forKey:@"country"];
+                                                                 cblock(_location);
+                                                             }
+                                                             else if (cblock)
+                                                                cblock(nil);
+                                                         }
+                                                         else if (errorBlock)
+                                                             errorBlock(_err.code, _err);
+                                                     }
+                                                   httpErrorBlock:nil
+                                                       errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
+                                                    completeBlock:^(NSURLConnection*_connection){
+                                                        [_connectionInProgress removeObjectForKey:_connectionKey];
+                                                        if ([_connectionInProgress allValues].count == 0)
+                                                        {
+                                                            for (unsigned i=0;i<maxConnectionInprogress&&i<[[_connectionsInPendding allValues] count];i++)
+                                                            {
+                                                                NSURLConnectionWithBlocks *conn = [[_connectionsInPendding allValues] objectAtIndex:i];
+                                                                [_connectionInProgress setValue:conn forKey:conn.identifier];
+                                                                [_connectionsInPendding removeObjectForKey:conn.identifier];
+                                                                [conn start];
+                                                            }
+                                                        }
+                                                    }];
+    if (connection)
+    {
+        connection.identifier = _connectionKey;
+        if ([_connectionInProgress allValues].count < maxConnectionInprogress)
         {
-            NSDictionary *_json = [NSJSONSerialization JSONObjectWithData:_jsonData
-                                                                  options:NSJSONReadingAllowFragments
-                                                                    error:&_err];
-            if (_err == nil)
-            {
-                id _locObject = [_json[@"search_api"][@"result"] lastObject];
-                if (_locObject)
-                {
-                    [_location removeAllObjects];
-                    [_location setValue:[_locObject[@"areaName"] lastObject][@"value"] forKey:@"areaName"];
-                    [_location setValue:[_locObject[@"region"] lastObject][@"value"] forKey:@"region"];
-                    [_location setValue:[_locObject[@"country"] lastObject][@"value"] forKey:@"country"];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        cblock(_location);
-                    });
-                }
-                else
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        cblock(nil);
-                    });
-            }
-            else if (errorBlock)
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    errorBlock([_err localizedDescription]);
-                });
+            [_connectionInProgress setValue:connection forKey:_connectionKey];
+            [connection start];
         }
-        else if (errorBlock)
-            dispatch_async(dispatch_get_main_queue(), ^{
-                errorBlock([_err localizedDescription]);
-            });
-        _inProgressLocation = NO;
-    });
+        else
+            [_connectionsInPendding setValue:connection forKey:_connectionKey];
+    }
 }
 @end

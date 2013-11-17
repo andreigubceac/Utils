@@ -5,14 +5,14 @@
 //  Copyright (c) 2013. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "NSURLConnection+Blocks.h"
 #import "BlocksAdditions.h"
 
 @interface AGWeatherManager : NSObject
 
 - (void)weatherDataForNextDays:(NSUInteger)nextNrDays forCoordinates:(CLLocationCoordinate2D)coordinates
-                 completeBlock:(ResultBlock)cblock errorBlock:(ErrorBlock)errorBlock;
+                 completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock;
 - (void)locationDataForCoordinates:(CLLocationCoordinate2D)coordinates
-                     completeBlock:(ResultBlock)cblock errorBlock:(ErrorBlock)errorBlock;
+                     completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock;
 
 @end
