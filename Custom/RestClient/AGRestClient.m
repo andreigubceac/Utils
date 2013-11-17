@@ -135,6 +135,7 @@ static int maxConnectionInprogress = 10;
     self = [super init];
     if (self)
     {
+        _accessTokenKey         = @"auth_token";
         _connectionInProgress   = [[NSMutableDictionary alloc] init];
         _connectionsInPendding  = [[NSMutableDictionary alloc] init];
         _session = [[AGSession alloc] init];
@@ -240,7 +241,7 @@ static int maxConnectionInprogress = 10;
     if (withSessionId)
     {
         //        [queryParams addObject:[NSString stringWithFormat:@"cKey=%@", [NSString getUUID]]];
-        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", @"auth_token", self.session.auth_token]];
+        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", _accessTokenKey, self.session.auth_token]];
     }
     
     sessionURLStr = [NSString stringWithFormat:@"%@%@%@", sessionURLStr,([queryParams count]?@"?":@""), [queryParams componentsJoinedByString:@"&"]];

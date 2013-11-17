@@ -14,6 +14,9 @@
 
 
 @interface AGRestClient : NSObject
+{
+    NSString *_accessTokenKey;
+}
 @property (atomic, readonly) Reachability *reachability;
 @property (nonatomic, readonly) NSString *baseURLString;
 
