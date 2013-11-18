@@ -402,7 +402,7 @@ static int maxConnectionInprogress = 10;
     NSMutableData *tempPostData = [NSMutableData data];
     [tempPostData appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
-    for (NSString *_key in params)
+    for (NSString *_key in [params allKeys])
     {
         [tempPostData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", _key] dataUsingEncoding:NSUTF8StringEncoding]];
         [tempPostData appendData:[[params valueForKey:_key] dataUsingEncoding:NSUTF8StringEncoding]];
