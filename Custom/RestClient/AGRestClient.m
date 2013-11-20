@@ -203,6 +203,11 @@ static int maxConnectionInprogress = 10;
                                 withExpiresDate:date];
 }
 
+- (NSDictionary*)extraHTTPHeaders
+{
+    return nil;
+}
+
 
 - (NSURLConnection *)doRequest:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
                   successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock
@@ -247,6 +252,12 @@ static int maxConnectionInprogress = 10;
     sessionURLStr = [NSString stringWithFormat:@"%@%@%@", sessionURLStr,([queryParams count]?@"?":@""), [queryParams componentsJoinedByString:@"&"]];
     NSURL *sessionURL = [NSURL URLWithString:sessionURLStr];
     req.URL = sessionURL;
+    NSDictionary *_extra = [self extraHTTPHeaders];
+    if ([_extra isKindOfClass:[NSDictionary class]])
+    {
+        for (id _key in _extra.allKeys)
+            [req setValue:_extra[_key] forHTTPHeaderField:_key];
+    }
     //    WCLog(@"doRequest: %@", sessionURL);
     __block NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO

@@ -24,6 +24,7 @@
 + (id)sessionToken;
 - (void)createNewSessionWithToken:(NSString*)token accountId:(NSString*)aid expiresDate:(NSDate*)date;
 
+- (NSDictionary*)extraHTTPHeaders;
 - (BOOL)canAutoLogin;
 - (BOOL)isNetworkOK;
 - (void)cancelAllInProgressConnections;
