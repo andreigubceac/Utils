@@ -14,6 +14,7 @@ extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewCon
 @interface AGRevealViewController : UIViewController
 @property (nonatomic, strong) UIViewController *leftViewController, *centerViewController, *rightViewController;
 @property (nonatomic) BOOL disableLeftReveal, disableRightReveal;
+@property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 
 - (id)initWithLeftViewController:(UIViewController*)leftViewController
              rightViewController:(UIViewController*)rightViewController centerViewController:(UIViewController*)centerViewController;

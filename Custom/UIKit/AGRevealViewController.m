@@ -24,6 +24,7 @@ NSString *kAGRevealViewControllerWillCoverNotification = @"kAGRevealViewControll
 @end
 
 @implementation AGRevealViewController
+@synthesize panGesture = _panGesture;
 
 - (id)initWithLeftViewController:(UIViewController*)leftViewController rightViewController:(UIViewController*)rightViewController centerViewController:(UIViewController*)centerViewController
 {
