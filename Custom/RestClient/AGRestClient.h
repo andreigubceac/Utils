@@ -31,6 +31,11 @@
 - (BOOL)isInProgressConnectionForPath:(NSString*)absoluteString;
 - (void)closeSession;
 
+//General
+- (NSURLConnection *)doRequestAndParseJSON:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
+                              successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock;
+
+//Basic
 - (NSURLConnection*)GETJSONRequestWithURLPath:(NSString *)urlPath withSessionId:(BOOL)withSessionId queryParams:(NSDictionary *)queryParams
                                  successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock;
 
