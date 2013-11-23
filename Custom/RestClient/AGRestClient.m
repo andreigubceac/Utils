@@ -127,7 +127,7 @@ static int maxConnectionInprogress = 10;
 
 + (id)sessionToken
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"DMWebClientSession"] valueForKey:@"auth_token"];
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"AGWebClientSession"] valueForKey:@"auth_token"];
 }
 
 - (id)init
