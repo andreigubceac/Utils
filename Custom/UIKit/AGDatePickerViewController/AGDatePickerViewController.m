@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     _datePicker.date = _date;
-    self.contentSizeForViewInPopover = self.view.bounds.size;
+    self.preferredContentSize = self.view.bounds.size;
 }
 
 - (IBAction)cancelAction:(id)sender
