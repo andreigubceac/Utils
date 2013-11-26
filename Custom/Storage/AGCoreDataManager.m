@@ -13,6 +13,10 @@
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 @synthesize backgroundContext = _backgroundContext;
 
+- (NSString*)fileName//to override
+{
+    return nil;
+}
 #pragma mark - Core Data stack
 
 // Returns the managed object context for the application.
@@ -38,7 +42,7 @@
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"DressMe" withExtension:@"momd"];
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:[self fileName] withExtension:@"momd"];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
@@ -92,12 +96,12 @@
 #pragma mark - Application's Documents directory
 
 - (NSURL*)storeUrl {
-	return [[self applicationDocumentsDirectory] URLByAppendingPathComponent: @"DressMe.sqlite"];
+	return [[AGCoreDataManager applicationDocumentsDirectory] URLByAppendingPathComponent:[[self fileName] stringByAppendingPathExtension:@"sqlite"]];
 }
 
 
 // Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
++ (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }

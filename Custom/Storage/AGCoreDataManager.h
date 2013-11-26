@@ -12,6 +12,7 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *backgroundContext;
+- (NSString*)fileName;//to override
 
 - (void)saveContext:(NSManagedObjectContext*)context;
 - (void)saveContext;
@@ -19,7 +20,8 @@
 
 - (NSManagedObjectContext*)importContext;
 
-- (NSURL *)applicationDocumentsDirectory;
++ (NSURL *)applicationDocumentsDirectory;
+- (NSURL*)storeUrl;
 
 @end
 
