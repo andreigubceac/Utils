@@ -154,19 +154,19 @@
     }];
 }
 
-- (void)verifyStoreMetaData {
+- (void)verifyStoreMetaDataWithCompleteBlock:(void(^)(NSError*))block
+{
 	NSError *error = nil;
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	if ([fileManager fileExistsAtPath:[[self storeUrl] path]])
 	{
-		if (![self progressivelyMigrateURL:[self storeUrl]
-									ofType:NSSQLiteStoreType
-								   toModel:[self managedObjectModel]
-									 error:&error])
-		{
-			AGLog(@"%@",error);
-		}
-	}
+        [self progressivelyMigrateURL:[self storeUrl]
+                               ofType:NSSQLiteStoreType
+                              toModel:[self managedObjectModel]
+                                error:&error];
+    }
+    if (block)
+        block(error);
 }
 
 //START:progressivelyMigrateURLMethodName

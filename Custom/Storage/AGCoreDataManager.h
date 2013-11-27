@@ -14,6 +14,7 @@
 @property (readonly, strong, nonatomic) NSManagedObjectContext *backgroundContext;
 - (NSString*)fileName;//to override
 
+- (void)verifyStoreMetaDataWithCompleteBlock:(void(^)(NSError*))block;
 - (void)saveContext:(NSManagedObjectContext*)context;
 - (void)saveContext;
 - (void)saveBackgroundContext;
