@@ -6,7 +6,7 @@
 {
     if ([self respondsToSelector:@selector(setText:)])
     {
-        CGSize s = [[(UILabel*)self text] boundingRectWithSize:CGSizeMake(self.width, 10000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [(UILabel*)self font]} context:NULL].size;
+        CGSize s = [[(UILabel*)self text] boundingRectWithSize:CGSizeMake(self.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [(UILabel*)self font]} context:NULL].size;
         self.height = s.height;
         return;
     }
