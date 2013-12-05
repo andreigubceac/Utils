@@ -40,10 +40,15 @@
     return [FBSession.activeSession handleOpenURL:url];
 }
 
++ (void)logout
+{
+    [[FBSession activeSession] closeAndClearTokenInformation];
+}
+
 - (void)logout
 {
     _me = nil;
-    [[FBSession activeSession] closeAndClearTokenInformation];
+    [AGFBManager logout];
 }
 
 -(void)renewFacebookCredentials{
@@ -59,32 +64,14 @@
 -(void)fbResyncWithCompleteBlock:(void(^)(NSError*))cblock
 {
 	[[FBSession activeSession] closeAndClearTokenInformation];
-	
-    ACAccountStore *accountStore;
-    ACAccountType *accountTypeFB;
-    if ((accountStore = [[ACAccountStore alloc] init]) && (accountTypeFB = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook] ) )
-    {
-        
-        NSArray *fbAccounts = [accountStore accountsWithAccountType:accountTypeFB];
-        id account;
-        if (fbAccounts && [fbAccounts count] > 0 && (account = [fbAccounts objectAtIndex:0])){
-            
-            [accountStore renewCredentialsForAccount:account completion:^(ACAccountCredentialRenewResult renewResult, NSError *error) {
-                //we don't actually need to inspect renewResult or error.
-                if (cblock)
-                {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        cblock(error);
-                    });
-                }
-            }];
-			
+    [FBSession renewSystemCredentials:^(ACAccountCredentialRenewResult result, NSError *error) {
+        if (cblock)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cblock(error);
+            });
         }
-        else if (cblock)
-            cblock(nil);
-    }
-	else if (cblock)
-        cblock(nil);
+    }];
 }
 
 

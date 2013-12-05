@@ -13,6 +13,7 @@
 @property (nonatomic, readonly, strong) id<FBGraphUser> me;
 @property (nonatomic, readonly) NSString *accessToken;
 
++ (void)logout;
 - (BOOL)handleOpenURL:(NSURL*)url;
 - (BOOL)isLogged;
 - (void)logout;
