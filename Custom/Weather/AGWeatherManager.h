@@ -9,6 +9,7 @@
 #import "BlocksAdditions.h"
 
 @interface AGWeatherManager : NSObject
+- (NSString*)weatherConditionForCode:(NSNumber*)code;
 
 - (void)weatherDataForNextDays:(NSUInteger)nextNrDays forCoordinates:(CLLocationCoordinate2D)coordinates
                  completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock;
