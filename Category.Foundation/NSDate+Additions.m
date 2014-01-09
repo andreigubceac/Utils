@@ -141,6 +141,17 @@ NSMutableArray * NSStringFromComponent(NSString *name, NSInteger val, NSMutableA
     [formatter setDateFormat:format];
     return [formatter stringFromDate:self];
 }
+
+- (NSString*)weekDayName
+{
+    static NSDateFormatter *formatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"EEE"];
+    });
+    return [formatter stringFromDate:self];
+}
 @end
 
 

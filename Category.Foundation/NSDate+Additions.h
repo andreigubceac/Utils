@@ -17,6 +17,7 @@
 - (NSString*)longDescription;
 - (NSString*)shortDescription;
 - (NSString*)userfriendlyFormat;
+- (NSString*)weekDayName;
 
 - (NSString*)stringWithFormat:(NSString*)format;
 @end

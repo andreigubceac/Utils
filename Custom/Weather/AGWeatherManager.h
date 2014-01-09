@@ -8,6 +8,8 @@
 #import "NSURLConnection+Blocks.h"
 #import "BlocksAdditions.h"
 
+extern NSString *kWeatherDateFormat;
+
 @interface AGWeatherManager : NSObject
 - (NSString*)weatherConditionForCode:(NSNumber*)code;
 
