@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 @interface UIView (Additions)
+- (CGSize)contentSize;
 - (void)adjustContentSize;
 - (void)makeHorizontalCarousel;
 @end
