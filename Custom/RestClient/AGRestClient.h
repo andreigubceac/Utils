@@ -32,6 +32,9 @@
 - (void)closeSession;
 
 //General
+- (NSURLConnection *)doRequest:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
+                  successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock;
+
 - (NSURLConnection *)doRequestAndParseJSON:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
                               successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock;
 
