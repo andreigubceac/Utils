@@ -88,7 +88,7 @@
                                                 CGImageGetBitsPerComponent(self.CGImage),
                                                 CGImageGetBytesPerRow(self.CGImage),
                                                 CGImageGetColorSpace(self.CGImage),
-                                                kCGImageAlphaNoneSkipFirst);
+                                                kCGBitmapAlphaInfoMask);
     CGContextDrawImage(bitmap, CGRectMake(0, 0, CGImageGetWidth(self.CGImage), CGImageGetHeight(self.CGImage)), self.CGImage);
     CGImageRef newImageRef = CGBitmapContextCreateImage(bitmap);
     CGImageRef img = CGImageCreateWithMaskingColors(newImageRef, components);
