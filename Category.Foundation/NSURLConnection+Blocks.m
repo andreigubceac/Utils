@@ -94,7 +94,7 @@
 
 - (void)start
 {
-    self.assynConnectionTimer = [NSTimer scheduledTimerWithTimeInterval:20 target:self selector:@selector(cancelConnection:) userInfo:self repeats:NO];
+    self.assynConnectionTimer = [NSTimer scheduledTimerWithTimeInterval:self.originalRequest.timeoutInterval target:self selector:@selector(cancelConnection:) userInfo:self repeats:NO];
     [super start];
 }
 
