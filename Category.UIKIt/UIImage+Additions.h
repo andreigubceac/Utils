@@ -14,6 +14,8 @@
 @interface UIImage (quartz)
 + (UIImage*)pointImageWithColor:(UIColor*)c;
 + (UIImage *)captureView:(UIView *)view;
++ (UIImage*)imageWithSize:(CGSize)size backgroundColor:(UIColor*)bcolor foregroundImage:(UIImage*)fimage;
+
 - (unsigned char*)colorOfPointInImage:(CGPoint)point;
 - (UIImage*)imageWithMaskColorForPoint:(CGPoint)point;
 - (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
