@@ -124,11 +124,13 @@
 {
     if (CGSizeEqualToSize(size, CGSizeZero))
         return nil;
+    size.width *= [UIScreen mainScreen].scale;
+    size.height*= [UIScreen mainScreen].scale;
     UIGraphicsBeginImageContext(size);
     CGContextRef _ctx = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(_ctx, bcolor.CGColor);
     CGContextFillRect(_ctx, CGRectMake(0, 0, size.width, size.height));
-    [fimage drawInRect:(CGRect){CGPointMake((size.width-fimage.size.width)/2,(size.height-fimage.size.height)/2),size}];
+    [fimage drawInRect:(CGRect){CGPointMake((size.width-fimage.size.width)/2,(size.height-fimage.size.height)/2),fimage.size}];
     UIImage *_img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return _img;
