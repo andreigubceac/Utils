@@ -54,7 +54,7 @@
         }
     }
     else if (block)
-        block(nil,nil);
+        block(nil,[NSError errorWithDomain:NSStringFromClass([CLLocation class]) code:404 userInfo:@{NSLocalizedDescriptionKey: [AGLocationManager userFriendlyauthorizationStatus]}]);
 }
 
 + (NSString*)userFriendlyauthorizationStatus
@@ -74,7 +74,13 @@
     self.pblock = block;
     if (self.location == nil && location == nil)
         [self locationWithCompleteBlock:^(CLLocation *l, NSError *e) {
-            [self placemarkForLocation:l completeBlock:block];
+            if (e)
+            {
+                if (block)
+                    block(nil,e);
+            }
+            else
+                [self placemarkForLocation:l completeBlock:block];
         } refresh:YES];
     else if (self.pblock)
     {
