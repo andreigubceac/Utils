@@ -2,7 +2,7 @@
 
 @interface NSArray (Additions)
 - (id)firstObject;
-- (NSArray*)nullFreeRecords;
+- (NSMutableArray*)nullFreeRecords;
 @end
 
 @interface NSMutableArray (Additions)

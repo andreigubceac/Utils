@@ -31,7 +31,7 @@
 
 - (void)updateFromJson:(id)o{}
 
-- (id)jsonObject{return nil;}
+- (id)jsonObject{return [NSNull null];}
 
 @end
 

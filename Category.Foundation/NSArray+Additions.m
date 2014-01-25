@@ -6,7 +6,7 @@
     return ([self count]>0?[self objectAtIndex:0]:nil);
 }
 
-- (NSArray*)nullFreeRecords
+- (NSMutableArray*)nullFreeRecords
 {
     NSMutableArray *nullFreeRecords = [NSMutableArray array];
     for (id record in self) {
@@ -28,6 +28,22 @@
     if ([self count] > 0) {
         [self removeObjectAtIndex:0];
     }
+}
+
+@end
+
+@implementation NSArray (json)
+
+- (NSArray*)jsonObject
+{
+    NSMutableArray *_arr = [self nullFreeRecords];
+    int i = 0;
+    while (i<_arr.count) {
+        id _obj = [_arr objectAtIndex:i];
+        [_arr replaceObjectAtIndex:i withObject:[_obj jsonObject]];
+        i++;
+    }
+    return _arr;
 }
 
 @end
