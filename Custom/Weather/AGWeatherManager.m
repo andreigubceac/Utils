@@ -8,7 +8,7 @@
 #import "AGWeatherManager.h"
 
 const NSString *_key = @"e3aebbbb4w22caasjxkpcs6v";
-NSString *kWeatherDateFormat = @"YYYY-mm-dd";
+NSString *kWeatherDateFormat = @"YYYY-MM-dd";
 
 @interface AGWeatherManager ()
 {
@@ -96,7 +96,7 @@ static int maxConnectionInprogress = 10;
     if (CLLocationCoordinate2DIsValid(coordinates) == NO)
     {
         if (errorBlock)
-            errorBlock(400, [NSError errorWithDomain:@"CoreLocation" code:400 userInfo:@{NSLocalizedDescriptionKey :@"Invalide geo coordinates"}]);
+            errorBlock(400, [NSError errorWithDomain:@"CoreLocation" code:400 userInfo:@{NSLocalizedDescriptionKey :@"Invalid geo coordinates"}]);
         return;
     }
     
