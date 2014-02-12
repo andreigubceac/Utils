@@ -7,13 +7,6 @@
 
 #import "AGSocialManager.h"
 
-#import <MessageUI/MessageUI.h>
-#import <Social/Social.h>
-#import <Pinterest/Pinterest.h>
-//#import <GooglePlus/GPPSignIn.h>
-//#import <GooglePlus/GPPShare.h>
-#import <FacebookSDK/FacebookSDK.h>
-
 static NSString *_pinterestUrl = @"http://www.pinterest.com";
 
 @interface AGSocialManager ()<MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>//, GPPShareDelegate, GPPSignInDelegate>
@@ -45,12 +38,39 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     }
 }
 
++ (NSString*)pinterestId
+{
+    return nil;
+}
+
 - (Pinterest*)pinterest
 {
     if (_pinterest)
         return _pinterest;
-    return (_pinterest = [[Pinterest alloc] initWithClientId:@"1436176"]);//should be a custom Id
+    return (_pinterest = [[Pinterest alloc] initWithClientId:[[self class] pinterestId]]);//should be a custom Id
 }
+
++ (void)processError:(NSError*)err
+{
+    if ([err code] == kCFURLErrorNotConnectedToInternet)
+    {
+        
+    }
+    else
+    {
+        if  (err.code == (MFMailComposeResultCancelled | MessageComposeResultCancelled) ||
+             err.code == (FBOSIntegratedShareDialogResultCancelled | FBWebDialogResultDialogNotCompleted) ||
+             err.code == (SLComposeViewControllerResultCancelled)
+//             || err.code == (kGPPErrorShareboxCanceled | kGPPErrorShareboxCanceledByClient)
+             )
+        {/*nothing to do*/}
+        else
+        {
+            
+        }
+             }
+}
+
 
 + (BOOL)handleURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {

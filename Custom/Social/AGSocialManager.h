@@ -6,9 +6,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MessageUI/MessageUI.h>
+#import <Social/Social.h>
+#import <Pinterest/Pinterest.h>
+//#import <GooglePlus/GPPSignIn.h>
+//#import <GooglePlus/GPPShare.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 @interface AGSocialManager : NSObject
 + (AGSocialManager*)shared;
++ (NSString*)pinterestId;
+
++ (void)processError:(NSError*)err;
 + (void)deleteCookies;
 + (BOOL)handleURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 - (void)sendViaEmailTo:(NSArray *)tos subject:(NSString*)subject withBody:(id)messageBody withCompleteBlock:(void (^)(NSError *))block;
