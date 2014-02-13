@@ -275,6 +275,7 @@ static int maxConnectionInprogress = 10;
                                                        errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
                                                     completeBlock:^(NSURLConnection*_connection){
                                                         [_connectionInProgress removeObjectForKey:_connectionKey];
+                                                        [[NSURLCache sharedURLCache] removeCachedResponseForRequest:req];
                                                         if ([_connectionInProgress allValues].count == 0)
                                                         {
                                                             for (unsigned i=0;i<maxConnectionInprogress&&i<[[_connectionsInPendding allValues] count];i++)
