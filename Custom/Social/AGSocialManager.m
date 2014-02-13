@@ -24,7 +24,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     static AGSocialManager *_manager;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _manager = [[AGSocialManager alloc] init];
+        _manager = [[[self class] alloc] init];
     });
     return _manager;
 }
