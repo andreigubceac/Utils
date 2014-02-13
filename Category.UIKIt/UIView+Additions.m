@@ -6,14 +6,12 @@
 {
     if ([self respondsToSelector:@selector(setText:)])
     {
-        if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
-            return [[(UILabel*)self text] boundingRectWithSize:CGSizeMake(self.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [(UILabel*)self font]} context:NULL].size;
-        return [[(UILabel*)self text] sizeWithFont:[(UILabel*)self font] constrainedToSize:CGSizeMake(self.width, MAXFLOAT) lineBreakMode:[(UILabel*)self lineBreakMode]];
+        return [[(UILabel*)self text] boundingRectWithSize:CGSizeMake(self.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [(UILabel*)self font]} context:NULL].size;
     }
     return self.size;
 }
 
-- (void)adjustContentSize
+- (void)adjustContentSizeHeightIgnoringHiddenViews:(BOOL)ignore keepTopOffest:(BOOL)offset
 {
     if ([self respondsToSelector:@selector(setText:)])
     {
@@ -23,10 +21,13 @@
     }
     
     UIView *_v = [self.subviews objectAtIndex:0];
-    _v.top = 0;
+    if (offset == NO)
+        _v.top = 0;
     for (unsigned i = 1; i < [self.subviews count]; i++) {
+        if (ignore)
+            continue;
         UIView *_v1 = [self.subviews objectAtIndex:i];
-        _v1.top = _v.bottom;
+        _v1.top = ignore?_v.top:_v.bottom;
         _v = _v1;
     }
     self.height = _v.bottom;
@@ -35,6 +36,11 @@
         _v = [self.subviews lastObject];
         [(UIScrollView*)self setContentSize:(CGSize){self.width, _v.bottom}];
     }
+}
+
+- (void)adjustContentSizeHeight
+{
+    [self adjustContentSizeHeightIgnoringHiddenViews:YES keepTopOffest:NO];
 }
 
 - (void)makeHorizontalCarousel
