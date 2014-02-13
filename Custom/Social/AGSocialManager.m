@@ -193,9 +193,10 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     params.link                 = link;
     params.description          = desc;
     params.picture              = turl;
-    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-        
-        [FBDialogs presentShareDialogWithLink:link
+    if ([FBDialogs canPresentShareDialogWithParams:params])
+    {
+        [FBDialogs presentShareDialogWithParams:params
+                                    clientState:nil
                                       handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
                                           if (block)
                                               block(error);
