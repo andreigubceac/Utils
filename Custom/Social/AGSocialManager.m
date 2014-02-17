@@ -234,13 +234,13 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 /**
  Share on Twitter using their new awesome share dialog
  */
-- (void)shareViaTwitterWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link image:(UIImage*)image withCompleteBlock:(void (^)(NSError *))block
+- (void)shareViaTwitterWithInitialText:(NSString*)desc url:(NSURL*)url image:(UIImage*)image withCompleteBlock:(void (^)(NSError *))block
 {
     if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
         SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-        if (link)
-            [_vc addURL:link];
+        if (url)
+            [_vc addURL:url];
         [_vc setInitialText:desc];
         [_vc addImage:image];
         [_vc setCompletionHandler:^(SLComposeViewControllerResult res){

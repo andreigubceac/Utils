@@ -24,7 +24,7 @@
 
 - (void)sendViaSMSWithBody:(id)body withCompleteBlock:(void(^)(NSError*))block;
 - (void)shareViaFacebookWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link thumbnailURL:(NSURL*)turl thumbnailImage:(UIImage*)timage withCompleteBlock:(void (^)(NSError *))block;
-- (void)shareViaTwitterWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link image:(UIImage*)image withCompleteBlock:(void (^)(NSError *))block;
+- (void)shareViaTwitterWithInitialText:(NSString*)desc url:(NSURL*)url image:(UIImage*)image withCompleteBlock:(void (^)(NSError *))block;
 - (void)shareViaPinterestImageUrl:(NSURL*)imageUrl sourceUrl:(NSURL*)sourceUrl description:(NSString*)desc withCompleteBlock:(void (^)(NSError *))block;
 //- (void)shareViaGooglePlusWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link thumbnailURL:(NSURL*)turl withCompleteBlock:(void (^)(NSError *))block;
 
