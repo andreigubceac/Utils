@@ -20,7 +20,6 @@
 @interface AGSession : NSObject;
 @property (atomic, readonly) NSString *auth_token, *user_id;
 @property (atomic, readonly) NSDate *expires;
-@property (nonatomic, strong) NSTimer *expiresTimer;
 
 - (id)initWithToken:(NSString*)token withAccountId:(NSString*)aid withExpiresDate:(NSDate*)edate;
 - (id)initWithDictionary:(id)sessionDictionary;
@@ -43,9 +42,6 @@
         
         [[NSUserDefaults standardUserDefaults] setObject:@{@"auth_token" : token?token:@"", @"user_id": aid?aid:@"", @"expires" : edate?edate:[NSDate dateWithTimeIntervalSince1970:0]} forKey:@"AGWebClientSession"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        if ([[NSDate date] compare:edate] == NSOrderedAscending)
-            self.expiresTimer = [[NSTimer alloc] initWithFireDate:edate interval:0 target:self selector:@selector(expiresTimerAction:) userInfo:nil repeats:NO];
-        
     }
     return self;
 }
@@ -71,8 +67,6 @@
     _expires = nil;
     _auth_token = nil;
     _user_id = nil;
-    [self.expiresTimer invalidate];
-    self.expiresTimer = nil;
 }
 
 - (void)closeAndClearTokenInformation
@@ -82,15 +76,6 @@
     _expires = nil;
     _auth_token = nil;
     _user_id = nil;
-    [self.expiresTimer invalidate];
-    self.expiresTimer = nil;
-}
-
-- (void)expiresTimerAction:(NSTimer*)t
-{
-    [t invalidate];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWebAPIClientSessionExpired object:nil];
-    self.expiresTimer = nil;
 }
 
 - (BOOL)isSessionValid
@@ -267,10 +252,6 @@ static int maxConnectionInprogress = 10;
                                                    httpErrorBlock:^(NSInteger code, NSHTTPURLResponse *res, NSData *resBody){
                                                        errorBlock(code,[NSError errorWithDomain:kServerAPIErrorDomain code:code
                                                                                        userInfo:@{NSLocalizedDescriptionKey : [[NSString alloc] initWithData:resBody encoding:NSUTF8StringEncoding]}]);
-                                                       if (401 == code)
-                                                       {
-                                                           [[NSNotificationCenter defaultCenter] postNotificationName:kWebAPIClientSessionExpired object:nil];
-                                                       }
                                                    }
                                                        errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
                                                     completeBlock:^(NSURLConnection*_connection){
