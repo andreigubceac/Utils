@@ -81,7 +81,7 @@
 - (UIImage*)imageWithMaskColorForPoint:(CGPoint)point
 {
     unsigned char *selectedColor = [self colorOfPointInImage:point];
-    float components[6] =  {selectedColor[1]-5,selectedColor[1]+5, selectedColor[2]-5, selectedColor[2]+5,selectedColor[3]-5, selectedColor[3]+5};
+    CGFloat components[6] =  {selectedColor[1]-5,selectedColor[1]+5, selectedColor[2]-5, selectedColor[2]+5,selectedColor[3]-5, selectedColor[3]+5};
     CGContextRef bitmap = CGBitmapContextCreate(NULL,
                                                 CGImageGetWidth(self.CGImage),
                                                 CGImageGetHeight(self.CGImage),

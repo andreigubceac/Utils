@@ -19,14 +19,13 @@
     return [comps day];
 }
 
-NSMutableArray * NSStringFromComponent(NSString *name, NSInteger val, NSMutableArray *acc)
+NSMutableArray * NSStringFromComponent(NSString *name, NSUInteger val, NSMutableArray *acc)
 {
     if (0 == val)
 	{
         return acc;
     }
-    NSMutableString *str = [NSMutableString stringWithFormat:@"%i %@", val, name];
-    
+    NSMutableString *str = [NSMutableString stringWithFormat:@"%lu %@", (unsigned long)val, name];
 	if (val > 1)
 	{
         [str appendString:@"s"];

@@ -106,7 +106,7 @@ static int maxConnectionInprogress = 10;
         return ;
     }
 
-    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/weather.ashx?%@&format=json&num_of_days=%d&key=%@",_connectionKey,nextNrDays,_key]]];
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/weather.ashx?%@&format=json&num_of_days=%lu&key=%@",_connectionKey,(unsigned long)nextNrDays,_key]]];
     __block NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
                                                      successBlock:^(NSHTTPURLResponse *res, NSData *resBody){
