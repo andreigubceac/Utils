@@ -301,7 +301,7 @@ static int maxConnectionInprogress = 10;
         NSError *jsonError = nil;
         id res = [NSJSONSerialization JSONObjectWithData:resBody options:NSJSONReadingAllowFragments error:&jsonError];
         if (nil != res) {
-            ULog(@"resStr: %@", res);
+            ULog(@"%@", res);
             successBlock(res);
             /*
              NSString *serverOk = [res valueForKey:@"result"];
