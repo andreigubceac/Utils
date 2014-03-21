@@ -21,7 +21,9 @@ typedef void (^StoreProgressBlock)(NSString *message);
 {
     AGCoreDataManager *_coredataManager;//optionaly
 }
-- (NSURL *)applicationCacheDirectory;
++ (NSURL *)applicationCacheDirectory;
++ (NSURL *)applicationDocumentsDirectory;
+
 - (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier;
 - (void)deleteJSONDataRecordsForIdentifier:(NSString *)identifier;
 - (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier;

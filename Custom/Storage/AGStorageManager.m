@@ -13,15 +13,20 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 @implementation AGStorageManager
 #pragma mark - File Management
 
-- (NSURL *)applicationCacheDirectory
++ (NSURL *)applicationCacheDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
++ (NSURL *)applicationDocumentsDirectory
+{
+    return [AGStorageManager applicationCacheDirectory];
 }
 
 - (NSURL *)JSONDataRecordsDirectory{
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *url = [NSURL URLWithString:@"JSONRecords/" relativeToURL:[self applicationCacheDirectory]];
+    NSURL *url = [NSURL URLWithString:@"JSONRecords/" relativeToURL:[AGStorageManager applicationCacheDirectory]];
     NSError *error = nil;
     if (![fileManager fileExistsAtPath:[url path]]) {
         [fileManager createDirectoryAtPath:[url path] withIntermediateDirectories:YES attributes:nil error:&error];
