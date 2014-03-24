@@ -15,7 +15,12 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
 + (NSURL *)applicationCacheDirectory
 {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+    static NSURL *_cacheUrl = nil;
+    if (_cacheUrl)
+        return _cacheUrl;
+    _cacheUrl = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+    _cacheUrl = [_cacheUrl URLByAppendingPathComponent:[[NSBundle mainBundle] infoDictionary][@"CFBundleIdentifier"]];
+    return _cacheUrl;
 }
 
 + (NSURL *)applicationDocumentsDirectory
@@ -23,26 +28,9 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     return [AGStorageManager applicationCacheDirectory];
 }
 
-- (NSURL *)JSONDataRecordsDirectory{
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *url = [NSURL URLWithString:@"JSONRecords/" relativeToURL:[AGStorageManager applicationCacheDirectory]];
-    NSError *error = nil;
-    if (![fileManager fileExistsAtPath:[url path]]) {
-        [fileManager createDirectoryAtPath:[url path] withIntermediateDirectories:YES attributes:nil error:&error];
-    }
-    
-    return url;
-}
-
-- (void)removeJSONDataRecordsDirectory
-{
-    AGLog(@"%d",[[NSFileManager defaultManager] removeItemAtURL:[self JSONDataRecordsDirectory] error:nil]);
-}
-
 - (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier
 {
-    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[self JSONDataRecordsDirectory]];
+    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
     NSArray *records = nullToNil(response);
     
     if (nil == records)
@@ -60,7 +48,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 }
 
 - (void)deleteJSONDataRecordsForIdentifier:(NSString *)identifier {
-    NSURL *url = [NSURL URLWithString:identifier relativeToURL:[self JSONDataRecordsDirectory]];
+    NSURL *url = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
     NSError *error = nil;
     BOOL deleted = [[NSFileManager defaultManager] removeItemAtURL:url error:&error];
     if (!deleted) {
@@ -69,7 +57,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 }
 
 - (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier {
-    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[self JSONDataRecordsDirectory]];
+    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
     return [NSDictionary dictionaryWithContentsOfURL:fileURL];
 }
 
