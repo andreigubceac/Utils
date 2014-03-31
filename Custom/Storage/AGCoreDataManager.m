@@ -96,14 +96,14 @@
 #pragma mark - Application's Documents directory
 
 - (NSURL*)storeUrl {
-	return [[AGCoreDataManager applicationDocumentsDirectory] URLByAppendingPathComponent:[[self fileName] stringByAppendingPathExtension:@"sqlite"]];
+	return [[AGCoreDataManager applicationStoreDirectory] URLByAppendingPathComponent:[[self fileName] stringByAppendingPathExtension:@"sqlite"]];
 }
 
 
 // Returns the URL to the application's Documents directory.
-+ (NSURL *)applicationDocumentsDirectory
++ (NSURL *)applicationStoreDirectory
 {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 // Return the NSManagedObjectContext to be used in the background during sync
@@ -151,6 +151,8 @@
             AGLog(@"Could not save context due to %@", error);
             abort();
         }
+        else
+            [self saveContext:context.parentContext];
     }];
 }
 

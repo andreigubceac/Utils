@@ -25,7 +25,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
 + (NSURL *)applicationDocumentsDirectory
 {
-    return [AGStorageManager applicationCacheDirectory];
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 - (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier

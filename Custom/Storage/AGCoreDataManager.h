@@ -21,7 +21,7 @@
 
 - (NSManagedObjectContext*)importContext;
 
-+ (NSURL *)applicationDocumentsDirectory;
++ (NSURL *)applicationStoreDirectory;
 - (NSURL*)storeUrl;
 
 @end
