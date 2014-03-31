@@ -31,13 +31,13 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 - (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier
 {
     NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
-    NSArray *records = nullToNil(response);
+    NSArray *records = [nullToNil(response) nullFreeRecords];
     
     if (nil == records)
         return;
     
-    if (![[records nullFreeRecords] writeToFile:[fileURL path] atomically:YES]) {
-        NSAssert(false, @"fail");
+    NSData *_data = [NSJSONSerialization dataWithJSONObject:records options:NSJSONWritingPrettyPrinted error:nil];
+    if (![_data writeToURL:fileURL atomically:YES]) {
         AGLog(@"Failed all attempts to save reponse to disk: %@", response);
     } else {
         NSNumber *file_size = nil;
@@ -58,7 +58,8 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
 - (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier {
     NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
-    return [NSDictionary dictionaryWithContentsOfURL:fileURL];
+    id _dict = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:fileURL] options:NSJSONReadingAllowFragments error:nil];
+    return _dict;
 }
 
 - (NSArray *)JSONDataRecordsForIdentifier:(NSString *)identifier sortedByKey:(NSString *)key {
