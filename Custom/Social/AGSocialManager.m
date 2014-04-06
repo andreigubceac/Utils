@@ -94,8 +94,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
                         error:(NSError *)error
 {
     // check the result of the send after the viewcontroller is done animating
-    UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-    [_w.rootViewController dismissViewControllerAnimated:YES completion:^{
+    [controller dismissViewControllerAnimated:YES completion:^{
         if (self.block)
         {
             if (error)
@@ -126,7 +125,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
  details
  */
 
-- (void)sendViaEmailTo:(NSArray *)tos subject:(NSString*)subject withBody:(id)messageBody withCompleteBlock:(void (^)(NSError *))block
+- (void)sendViaEmailTo:(NSArray *)tos subject:(NSString*)subject withBody:(id)messageBody fromViewController:(UIViewController *)viewController withCompleteBlock:(void (^)(NSError *))block
 {
     if(![MFMailComposeViewController canSendMail])
     {
@@ -153,10 +152,17 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
         
         dispatch_async(dispatch_get_main_queue(), ^(void){
             //Run UI Updates
-            UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-            [_w.rootViewController presentViewController:controller animated:YES completion:^(void){
-                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-            }];
+            if (viewController)
+               [viewController presentViewController:controller animated:YES completion:^{
+                    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+                }];
+            else
+            {
+                UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
+                [_w.rootViewController presentViewController:controller animated:YES completion:^(void){
+                    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+                }];
+            }
         });
     });
 }

@@ -20,7 +20,11 @@
 + (void)processError:(NSError*)err;
 + (void)deleteCookies;
 + (BOOL)handleURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
-- (void)sendViaEmailTo:(NSArray *)tos subject:(NSString*)subject withBody:(id)messageBody withCompleteBlock:(void (^)(NSError *))block;
+
+- (void)sendViaEmailTo:(NSArray *)tos subject:(NSString*)subject
+              withBody:(id)messageBody
+    fromViewController:(UIViewController*)viewController//pass nil to user window.rootViewController;
+     withCompleteBlock:(void (^)(NSError *))block;
 
 - (void)sendViaSMSWithBody:(id)body withCompleteBlock:(void(^)(NSError*))block;
 - (void)shareViaFacebookWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link thumbnailURL:(NSURL*)turl thumbnailImage:(UIImage*)timage withCompleteBlock:(void (^)(NSError *))block;
