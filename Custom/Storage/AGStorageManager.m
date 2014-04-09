@@ -58,8 +58,8 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
 - (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier {
     NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
-    id _dict = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:fileURL] options:NSJSONReadingAllowFragments error:nil];
-    return _dict;
+    NSData *_data = [NSData dataWithContentsOfURL:fileURL];
+    return _data?[NSJSONSerialization JSONObjectWithData:_data options:NSJSONReadingAllowFragments error:nil]:nil;
 }
 
 - (NSArray *)JSONDataRecordsForIdentifier:(NSString *)identifier sortedByKey:(NSString *)key {
