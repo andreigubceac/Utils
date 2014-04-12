@@ -64,6 +64,11 @@
     return s?([s isEqual:[NSNull null]]?@"":s):@"";
 }
 
+- (NSString*)emptyString
+{
+    return [NSString emptyString:self];
+}
+
 @end
 
 @implementation NSString (UUID)

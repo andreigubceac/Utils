@@ -11,6 +11,7 @@
 @end
 @interface NSString (NilCheck)
 + (NSString*)emptyString:(NSString*)s;
+- (NSString*)emptyString;
 @end
 
 @interface NSString (UUID)
