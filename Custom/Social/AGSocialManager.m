@@ -211,15 +211,15 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     else if ([FBDialogs canPresentOSIntegratedShareDialogWithSession:Nil])
     {
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-        if ([FBDialogs presentOSIntegratedShareDialogModallyFrom:_w.rootViewController
+        if ([FBDialogs canPresentOSIntegratedShareDialogWithSession:nil])
+            [FBDialogs presentOSIntegratedShareDialogModallyFrom:_w.rootViewController
                                                      initialText:desc?desc:title
                                                            image:timage
                                                              url:link
                                                          handler:^(FBOSIntegratedShareDialogResult result, NSError *error) {
                                                              if (block)
                                                                  block(error?error:(result == FBOSIntegratedShareDialogResultCancelled?[NSError errorWithDomain:@"FBOSIntegratedShareDialogResult" code:FBOSIntegratedShareDialogResultCancelled userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%d",result]}]:nil));
-                                                         }])
-            return;
+                                                         }];
     }
     else
     {
@@ -244,14 +244,13 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 {
     if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
-        SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+        __weak SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         if (url)
             [_vc addURL:url];
         [_vc setInitialText:desc];
         [_vc addImage:image];
         [_vc setCompletionHandler:^(SLComposeViewControllerResult res){
-            if (block)
-                block(nil);
+            [_vc dismissViewControllerAnimated:YES completion:^{if(block)block(nil);}];
         }];
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
         [_w.rootViewController presentViewController:_vc animated:YES completion:nil];
