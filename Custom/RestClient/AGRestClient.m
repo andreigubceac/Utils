@@ -11,72 +11,10 @@
 #import "NSDictionary+Additions.h"
 #import "NSString+Additions.h"
 
-@interface AGSession : NSObject;
-@property (atomic, readonly) NSString *auth_token;
-
-- (id)initWithToken:(NSString*)token;
-- (id)initWithDictionary:(id)sessionDictionary;
-- (void)closeAndClearTokenInformation;
-- (BOOL)isSessionValid;
-@end
-
-
-@implementation AGSession
-
-- (id)initWithToken:(NSString*)token
-{
-    self = [super init];
-    if (self)
-    {
-        _auth_token = token;
-        
-        [[NSUserDefaults standardUserDefaults] setObject:@{@"auth_token" : [NSString emptyString:token]} forKey:@"AGWebClientSession"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-    return self;
-}
-
-- (id)initWithDictionary:(id)sessionDictionary
-{
-    return [self initWithToken:sessionDictionary[@"auth_token"]];
-}
-
-- (id)init
-{
-    id _session = [[NSUserDefaults standardUserDefaults] objectForKey:@"AGWebClientSession"];
-    return [self initWithToken:[_session valueForKey:@"auth_token"]];
-}
-
-- (NSString*)description
-{
-    return [[super description] stringByAppendingFormat:@" %@",[[NSUserDefaults standardUserDefaults] objectForKey:@"AGWebClientSession"]];
-}
-
-- (void)dealloc
-{
-    _auth_token = nil;
-}
-
-- (void)closeAndClearTokenInformation
-{
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"AGWebClientSession"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    _auth_token = nil;
-}
-
-- (BOOL)isSessionValid
-{
-    return ([_auth_token length]>0);
-}
-
-@end
-
-
 @interface  AGRestClient()
 {
     NSMutableDictionary *_connectionInProgress, *_connectionsInPendding;
 }
-@property (atomic, readonly) AGSession *session;
 @end
 
 
@@ -103,9 +41,9 @@ static int maxConnectionInprogress = 10;
     if (self)
     {
         _accessTokenKey         = @"auth_token";
+        _accessTokenValue       = [[self class] sessionToken];
         _connectionInProgress   = [[NSMutableDictionary alloc] init];
         _connectionsInPendding  = [[NSMutableDictionary alloc] init];
-        _session = [[AGSession alloc] init];
         [NSHTTPCookieStorage sharedHTTPCookieStorage].cookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
     }
     return self;
@@ -137,7 +75,7 @@ static int maxConnectionInprogress = 10;
 
 - (BOOL)canAutoLogin
 {
-    return [_session isSessionValid];
+    return [[[self class] sessionToken]length]>0;
 }
 
 - (void)cancelAllInProgressConnections
@@ -150,8 +88,9 @@ static int maxConnectionInprogress = 10;
 
 - (void)closeSession
 {
-    [_session closeAndClearTokenInformation];
-    _session = nil;
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"AGWebClientSession"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    _accessTokenValue = nil;
 }
 
 - (BOOL)isInProgressConnectionForPath:(NSString*)absoluteString
@@ -164,8 +103,8 @@ static int maxConnectionInprogress = 10;
 
 - (void)createNewSessionWithToken:(NSString*)token
 {
-    [_session closeAndClearTokenInformation];
-    _session = [[AGSession alloc] initWithToken:token];
+    [[NSUserDefaults standardUserDefaults] setObject:@{@"auth_token" : (_accessTokenValue = [NSString emptyString:token])} forKey:@"AGWebClientSession"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSDictionary*)extraHTTPHeaders
@@ -211,7 +150,7 @@ static int maxConnectionInprogress = 10;
     if (withSessionId)
     {
         //        [queryParams addObject:[NSString stringWithFormat:@"cKey=%@", [NSString getUUID]]];
-        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", _accessTokenKey, self.session.auth_token]];
+        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", _accessTokenKey, _accessTokenValue]];
     }
     
     sessionURLStr = [NSString stringWithFormat:@"%@%@%@", sessionURLStr,([queryParams count]?@"?":@""), [queryParams componentsJoinedByString:@"&"]];
