@@ -22,9 +22,7 @@
 
 + (AGRestClient *)restClientWithBaseURLString:(NSString *)aBaseURLString
 {
-    AGRestClient *webClient = [[[self class] alloc] init];
-    [webClient setBaseURLString:aBaseURLString];
-    return webClient;
+    return [[[self class] alloc] initWithBaseUrlString:aBaseURLString];
 }
 
 #pragma mark - overrided
@@ -35,32 +33,24 @@ static int maxConnectionInprogress = 10;
     return [[[NSUserDefaults standardUserDefaults] objectForKey:@"AGWebClientSession"] valueForKey:@"auth_token"];
 }
 
-- (id)init
+- (id)initWithBaseUrlString:(NSString*)baseUrlString
 {
-    self = [super init];
-    if (self)
+    if ((self = [super init]))
     {
+        _baseURLString          = baseUrlString;
         _accessTokenKey         = @"auth_token";
         _accessTokenValue       = [[self class] sessionToken];
         _connectionInProgress   = [[NSMutableDictionary alloc] init];
         _connectionsInPendding  = [[NSMutableDictionary alloc] init];
+        _reachability           = [Reachability reachabilityForInternetConnection];
         [NSHTTPCookieStorage sharedHTTPCookieStorage].cookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
     }
     return self;
 }
 
-- (void)dealloc
+- (id)init
 {
-    [_reachability stopNotifier];
-}
-
-- (void)setBaseURLString:(NSString *)baseURLString_
-{
-    _baseURLString = baseURLString_;
-    if (baseURLString_)
-    {
-        _reachability = [Reachability reachabilityForInternetConnection];
-    }
+    return [self initWithBaseUrlString:@"http://localhost:8080"];
 }
 
 - (BOOL)isNetworkOK

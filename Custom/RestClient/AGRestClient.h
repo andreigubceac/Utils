@@ -22,6 +22,8 @@
 
 + (AGRestClient *)restClientWithBaseURLString:(NSString *)aBaseURLString;
 + (id)sessionToken;
+
+- (id)initWithBaseUrlString:(NSString*)baseUrlString;
 - (void)createNewSessionWithToken:(NSString*)token;
 
 - (NSDictionary*)extraHTTPHeaders;
