@@ -11,6 +11,7 @@
 @interface NSObject (Additions)
 + (id)loadFromNibWithOwner:(id)owner;
 + (id)loadFromNib;
++ (NSString*)bundleIdentifier;
 + (NSString*)appInfoVersion;
 @end
 

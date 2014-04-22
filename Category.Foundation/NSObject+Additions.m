@@ -25,6 +25,11 @@
         _appVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
     return _appVersion;
 }
+
++ (NSString*)bundleIdentifier
+{
+    return [[NSBundle mainBundle] infoDictionary][@"CFBundleIdentifier"];
+}
 @end
 
 @implementation NSObject (json)
