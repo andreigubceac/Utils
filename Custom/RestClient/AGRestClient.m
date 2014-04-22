@@ -88,6 +88,7 @@ static int maxConnectionInprogress = 10;
 
 - (void)closeSession
 {
+    [self cancelAllInProgressConnections];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"AGWebClientSession"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     _accessTokenValue = nil;
