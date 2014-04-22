@@ -22,7 +22,7 @@
 
 + (AGRestClient *)restClientWithBaseURLString:(NSString *)aBaseURLString;
 + (id)sessionToken;
-- (void)createNewSessionWithToken:(NSString*)token accountId:(NSString*)aid expiresDate:(NSDate*)date;
+- (void)createNewSessionWithToken:(NSString*)token;
 
 - (NSDictionary*)extraHTTPHeaders;
 - (BOOL)canAutoLogin;

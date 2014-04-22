@@ -19,7 +19,7 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     if (_cacheUrl)
         return _cacheUrl;
     _cacheUrl = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-    _cacheUrl = [_cacheUrl URLByAppendingPathComponent:[[NSBundle mainBundle] infoDictionary][@"CFBundleIdentifier"]];
+    _cacheUrl = [_cacheUrl URLByAppendingPathComponent:[NSObject bundleIdentifier]];
     return _cacheUrl;
 }
 

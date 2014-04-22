@@ -12,29 +12,25 @@
 #import "NSString+Additions.h"
 
 @interface AGSession : NSObject;
-@property (atomic, readonly) NSString *auth_token, *user_id;
-@property (atomic, readonly) NSDate *expires;
+@property (atomic, readonly) NSString *auth_token;
 
-- (id)initWithToken:(NSString*)token withAccountId:(NSString*)aid withExpiresDate:(NSDate*)edate;
+- (id)initWithToken:(NSString*)token;
 - (id)initWithDictionary:(id)sessionDictionary;
 - (void)closeAndClearTokenInformation;
-- (BOOL)canAutoLogin;//user_id>0 && session expired = NO
 - (BOOL)isSessionValid;
 @end
 
 
 @implementation AGSession
 
-- (id)initWithToken:(NSString*)token withAccountId:(NSString*)aid withExpiresDate:(NSDate*)edate
+- (id)initWithToken:(NSString*)token
 {
     self = [super init];
     if (self)
     {
         _auth_token = token;
-        _user_id = aid;
-        _expires    = edate;
         
-        [[NSUserDefaults standardUserDefaults] setObject:@{@"auth_token" : token?token:@"", @"user_id": aid?aid:@"", @"expires" : edate?edate:[NSDate dateWithTimeIntervalSince1970:0]} forKey:@"AGWebClientSession"];
+        [[NSUserDefaults standardUserDefaults] setObject:@{@"auth_token" : [NSString emptyString:token]} forKey:@"AGWebClientSession"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     return self;
@@ -42,13 +38,13 @@
 
 - (id)initWithDictionary:(id)sessionDictionary
 {
-    return [self initWithToken:sessionDictionary[@"auth_token"] withAccountId:sessionDictionary[@"user_id"] withExpiresDate:[NSDate dateWithTimeIntervalSince1970:[sessionDictionary[@"expires"] doubleValue]]];
+    return [self initWithToken:sessionDictionary[@"auth_token"]];
 }
 
 - (id)init
 {
     id _session = [[NSUserDefaults standardUserDefaults] objectForKey:@"AGWebClientSession"];
-    return [self initWithToken:[_session valueForKey:@"auth_token"] withAccountId:_session[@"user_id"] withExpiresDate:_session[@"expires"]];
+    return [self initWithToken:[_session valueForKey:@"auth_token"]];
 }
 
 - (NSString*)description
@@ -58,29 +54,21 @@
 
 - (void)dealloc
 {
-    _expires = nil;
     _auth_token = nil;
-    _user_id = nil;
 }
 
 - (void)closeAndClearTokenInformation
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"AGWebClientSession"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    _expires = nil;
     _auth_token = nil;
-    _user_id = nil;
 }
 
 - (BOOL)isSessionValid
 {
-    return (_expires != nil);// && [_expires compare:[NSDate dateWithTimeIntervalSinceNow:600]] == NSOrderedDescending);
+    return ([_auth_token length]>0);
 }
 
-- (BOOL)canAutoLogin
-{
-    return ([_user_id intValue] > 0 && [self isSessionValid]);
-}
 @end
 
 
@@ -149,7 +137,7 @@ static int maxConnectionInprogress = 10;
 
 - (BOOL)canAutoLogin
 {
-    return [_session canAutoLogin];
+    return [_session isSessionValid];
 }
 
 - (void)cancelAllInProgressConnections
@@ -174,12 +162,10 @@ static int maxConnectionInprogress = 10;
 
 #pragma mark - private
 
-- (void)createNewSessionWithToken:(NSString*)token accountId:(NSString*)aid expiresDate:(NSDate*)date
+- (void)createNewSessionWithToken:(NSString*)token
 {
     [_session closeAndClearTokenInformation];
-    _session = [[AGSession alloc] initWithToken:token
-                                  withAccountId:aid
-                                withExpiresDate:date];
+    _session = [[AGSession alloc] initWithToken:token];
 }
 
 - (NSDictionary*)extraHTTPHeaders
