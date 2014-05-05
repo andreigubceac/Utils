@@ -4,7 +4,7 @@
 - (NSString *)URLEncodedString;
 @end
 @interface NSString (Regex)
-- (BOOL)isEmailFormatValid;
+- (BOOL) isEmailFormatValid;
 - (BOOL) isPhoneNumberFormatValid;
 - (BOOL) isDecimalFormat;
 - (BOOL) isDecimalPositiveFormat;
@@ -16,4 +16,8 @@
 
 @interface NSString (UUID)
 + (NSString*)getUUID;
+@end
+
+@interface NSString (URL)
+- (NSMutableDictionary*)queryParams;
 @end

@@ -85,3 +85,18 @@
 }
 
 @end
+
+@implementation NSString (URL)
+
+- (NSMutableDictionary*)queryParams
+{
+    NSMutableDictionary *_qParams = [NSMutableDictionary dictionary];
+    [[self componentsSeparatedByString:@"&"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSArray *_keyValue = [obj componentsSeparatedByString:@"="];
+        if (_keyValue.count==2)
+            [_qParams setValue:_keyValue.lastObject forKey:_keyValue.firstObject];
+    }];
+    return _qParams;
+}
+
+@end
