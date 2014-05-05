@@ -6,7 +6,7 @@
 {
     if ([self respondsToSelector:@selector(setText:)])
     {
-        if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
+        if ([[(UILabel*)self text] respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)])
             return [[(UILabel*)self text] boundingRectWithSize:CGSizeMake(self.width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [(UILabel*)self font]} context:NULL].size;
         return [[(UILabel*)self text] sizeWithFont:[(UILabel*)self font] constrainedToSize:CGSizeMake(self.width, MAXFLOAT) lineBreakMode:[(UILabel*)self lineBreakMode]];
     }
