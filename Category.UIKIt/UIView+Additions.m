@@ -13,7 +13,7 @@
     return self.size;
 }
 
-- (void)adjustContentSizeHeightIgnoringHiddenViews:(BOOL)ignore keepTopOffest:(BOOL)offset
+- (void)adjustContentSizeHeightKeepingTopOffest:(BOOL)offset
 {
     if ([self respondsToSelector:@selector(setText:)])
     {
@@ -21,18 +21,16 @@
         self.height = s.height;
         return;
     }
-    
-    UIView *_v = [self.subviews objectAtIndex:0];
+    UIView *_v = [self.subviews firstObject];
     if (offset == NO)
         _v.top = 0;
+    CGFloat _h = _v.hidden?0:_v.height;
     for (unsigned i = 1; i < [self.subviews count]; i++) {
-        if (ignore)
-            continue;
-        UIView *_v1 = [self.subviews objectAtIndex:i];
-        _v1.top = ignore?_v.top:_v.bottom;
-        _v = _v1;
+        _v      = [self.subviews objectAtIndex:i];
+        _v.top  = _h;
+        _h      = _v.hidden?_h:_v.bottom;
     }
-    self.height = _v.bottom;
+    self.height = _h;
     if ([self respondsToSelector:@selector(setContentSize:)])
     {
         _v = [self.subviews lastObject];
@@ -42,7 +40,7 @@
 
 - (void)adjustContentSizeHeight
 {
-    [self adjustContentSizeHeightIgnoringHiddenViews:YES keepTopOffest:NO];
+    [self adjustContentSizeHeightKeepingTopOffest:NO];
 }
 
 - (void)makeHorizontalCarousel

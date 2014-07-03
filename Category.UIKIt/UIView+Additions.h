@@ -3,7 +3,7 @@
 @interface UIView (Additions)
 - (CGSize)contentSize;
 - (void)adjustContentSizeHeight;
-- (void)adjustContentSizeHeightIgnoringHiddenViews:(BOOL)ignore keepTopOffest:(BOOL)offset;
+- (void)adjustContentSizeHeightKeepingTopOffest:(BOOL)offset;
 - (void)makeHorizontalCarousel;
 @end
 
