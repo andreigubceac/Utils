@@ -11,6 +11,7 @@
 extern NSString *kWeatherDateFormat;
 
 @interface AGWeatherManager : NSObject
+- (void)resetData;
 - (NSString*)weatherConditionForCode:(NSNumber*)code;
 
 - (void)weatherDataForNextDays:(NSUInteger)nextNrDays forCoordinates:(CLLocationCoordinate2D)coordinates

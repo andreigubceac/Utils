@@ -16,7 +16,7 @@ NSString *kWeatherDateFormat = @"YYYY-MM-dd";
     NSMutableArray *_weatherObjects;
     NSCache *_weatherIcons;
     id _location;
-    NSTimer *_resetTimer;
+    CLLocationCoordinate2D _lastCoordinates;
 }
 @end
 
@@ -28,9 +28,8 @@ NSString *kWeatherDateFormat = @"YYYY-MM-dd";
     if (self)
     {
         _weatherObjects = [NSMutableArray array];
-        _location = [NSMutableDictionary dictionary];
+        _location       = [NSMutableDictionary dictionary];
         _weatherIcons   = [[NSCache alloc] init];
-        _resetTimer = [NSTimer scheduledTimerWithTimeInterval:3600 target:self selector:@selector(resetData:) userInfo:nil repeats:YES];
         _connectionInProgress   = [[NSMutableDictionary alloc] init];
         _connectionsInPendding  = [[NSMutableDictionary alloc] init];
     }
@@ -43,8 +42,6 @@ NSString *kWeatherDateFormat = @"YYYY-MM-dd";
     _weatherIcons = nil;
     [_weatherObjects removeAllObjects];
     _weatherObjects = nil;
-    [_resetTimer invalidate];
-    _resetTimer = nil;
 }
 
 - (void)cancelAllInProgressConnections
@@ -55,7 +52,7 @@ NSString *kWeatherDateFormat = @"YYYY-MM-dd";
     [_connectionsInPendding removeAllObjects];
 }
 
-- (void)resetData:(id)t
+- (void)resetData
 {
     [_weatherObjects removeAllObjects];
     [_location removeAllObjects];
@@ -87,6 +84,9 @@ static int maxConnectionInprogress = 10;
 - (void)weatherDataForNextDays:(NSUInteger)nextNrDays forCoordinates:(CLLocationCoordinate2D)coordinates
                  completeBlock:(ResultBlock)cblock errorBlock:(CommunicationErrorBlock)errorBlock
 {
+    if (_lastCoordinates.latitude != coordinates.latitude && _lastCoordinates.longitude != coordinates.longitude)
+        [self resetData];
+    
     if ([_weatherObjects count])
     {
         if (cblock)
@@ -135,6 +135,7 @@ static int maxConnectionInprogress = 10;
                                                                 [conn start];
                                                             }
                                                         }
+                                                        _lastCoordinates = coordinates;
                                                     }];
     if (connection)
     {
