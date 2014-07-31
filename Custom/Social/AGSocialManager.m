@@ -195,9 +195,9 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
  */
 - (void)shareViaFacebookWithTitle:(NSString*)title description:(NSString*)desc url:(NSURL*)link thumbnailURL:(NSURL*)turl thumbnailImage:(UIImage*)timage withCompleteBlock:(void (^)(NSError *))block
 {
-    FBShareDialogParams *params = [[FBShareDialogParams alloc] init];
+    FBLinkShareParams *params = [[FBLinkShareParams alloc] init];
     params.link                 = link;
-    params.description          = desc;
+    params.linkDescription      = desc;
     params.picture              = turl;
     if ([FBDialogs canPresentShareDialogWithParams:params])
     {
