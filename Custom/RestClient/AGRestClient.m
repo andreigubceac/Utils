@@ -76,6 +76,16 @@ static int maxConnectionInprogress = 10;
     [_connectionsInPendding removeAllObjects];
 }
 
+- (void)cancelConneciton:(NSURLConnectionWithBlocks*)conn
+{
+    [conn cancel];
+    if (conn.identifier)
+    {
+        [_connectionInProgress removeObjectForKey:conn.identifier];
+        [_connectionsInPendding removeObjectForKey:conn.identifier];
+    }
+}
+
 - (void)closeSession
 {
     [self cancelAllInProgressConnections];
@@ -154,7 +164,7 @@ static int maxConnectionInprogress = 10;
             [req setValue:_extra[_key] forHTTPHeaderField:_key];
     }
     //    WCLog(@"doRequest: %@", sessionURL);
-    __block NSURLConnectionWithBlocks *connection = nil;
+    NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
                                                      successBlock:^(NSHTTPURLResponse *res, NSData *resBody){
                                                          successBlock(resBody);

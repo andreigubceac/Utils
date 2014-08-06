@@ -12,6 +12,7 @@
 #define kServerAPIErrorDomain       @"ServerAPIErrorDomain"
 #define kServerAPIErrorDomainNotFoundCode   404
 
+@class NSURLConnectionWithBlocks;
 
 @interface AGRestClient : NSObject
 {
@@ -30,6 +31,7 @@
 - (BOOL)canAutoLogin;
 - (BOOL)isNetworkOK;
 - (void)cancelAllInProgressConnections;
+- (void)cancelConneciton:(NSURLConnectionWithBlocks*)conn;
 - (BOOL)isInProgressConnectionForPath:(NSString*)absoluteString;
 - (void)closeSession;
 
