@@ -249,6 +249,7 @@ static int maxConnectionInprogress = 10;
     NSMutableString *urlStr = [NSMutableString stringWithFormat:@"%@/%@?", self.baseURLString, urlPath];
     for (id _pName in [queryParams allKeys])
         [urlStr appendFormat:@"%@=%@&",_pName, [queryParams[_pName] URLEncodedString]];
+    [urlStr deleteCharactersInRange:NSMakeRange(urlStr.length-1, 1)];
     return [self doJSONRequest:[NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlStr]] withSessionId:withSessionId successBlock:successBlock errorBlock:errorBlock completeBlock:completeBlock];
 }
 
