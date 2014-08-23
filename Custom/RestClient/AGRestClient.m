@@ -13,7 +13,7 @@
 
 @interface  AGRestClient()
 {
-    NSMutableDictionary *_connectionInProgress, *_connectionsInPendding;
+    NSMutableDictionary *_connectionInProgress, *_connectionsInPendding, *_connectionsToRebuild;
 }
 @end
 
@@ -42,6 +42,7 @@ static int maxConnectionInprogress = 10;
         _accessTokenValue       = [[self class] sessionToken];
         _connectionInProgress   = [[NSMutableDictionary alloc] init];
         _connectionsInPendding  = [[NSMutableDictionary alloc] init];
+        _connectionsToRebuild   = [[NSMutableDictionary alloc] init];
         _reachability           = [Reachability reachabilityForInternetConnection];
         [NSHTTPCookieStorage sharedHTTPCookieStorage].cookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
     }
@@ -74,6 +75,7 @@ static int maxConnectionInprogress = 10;
     [_connectionInProgress removeAllObjects];
     [[_connectionsInPendding allValues] makeObjectsPerformSelector:@selector(cancel) withObject:nil];
     [_connectionsInPendding removeAllObjects];
+    [_connectionsToRebuild removeAllObjects];
 }
 
 - (void)cancelConneciton:(NSURLConnectionWithBlocks*)conn
@@ -83,6 +85,7 @@ static int maxConnectionInprogress = 10;
     {
         [_connectionInProgress removeObjectForKey:conn.identifier];
         [_connectionsInPendding removeObjectForKey:conn.identifier];
+        [_connectionsToRebuild removeObjectForKey:conn.identifier];
     }
 }
 
@@ -113,6 +116,41 @@ static int maxConnectionInprogress = 10;
     return nil;
 }
 
+- (void)buildUrlFromRequest:(NSMutableURLRequest*)req withSessionId:(BOOL)withSessionId
+{
+    NSURL *url = [req URL];
+    NSString *pathPart = [url path];
+    if ([@"" isEqualToString:pathPart]) {
+        pathPart = @"/";
+    }
+    else
+    {
+        NSString *_lastPathComp = [pathPart lastPathComponent];
+        pathPart = [[pathPart stringByDeletingLastPathComponent] stringByAppendingPathComponent:[_lastPathComp URLEncodedString]];
+    }
+    NSString *portPart = [url port] ? [NSString stringWithFormat:@":%i", [[url port] intValue]] : @"";
+    NSString *sessionURLStr = [NSString stringWithFormat:@"%@://%@%@%@", [url scheme], [url host], portPart, pathPart];
+    NSMutableArray *queryParams = [[[url query] componentsSeparatedByString:@"&"] mutableCopy];
+    if (nil == queryParams)
+        queryParams = [NSMutableArray array];
+    
+    if (withSessionId && _accessTokenValue)
+    {
+        if ([queryParams.lastObject rangeOfString:_accessTokenKey].location != NSNotFound)
+            [queryParams removeLastObject];
+        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", _accessTokenKey, _accessTokenValue]];
+    }
+    
+    sessionURLStr = [NSString stringWithFormat:@"%@%@%@", sessionURLStr,([queryParams count]?@"?":@""), [queryParams componentsJoinedByString:@"&"]];
+    NSURL *sessionURL = [NSURL URLWithString:sessionURLStr];
+    req.URL = sessionURL;
+    NSDictionary *_extra = [self extraHTTPHeaders];
+    if ([_extra isKindOfClass:[NSDictionary class]])
+    {
+        for (id _key in _extra.allKeys)
+            [req setValue:_extra[_key] forHTTPHeaderField:_key];
+    }
+}
 
 - (NSURLConnection *)doRequest:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
                   successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock
@@ -132,37 +170,7 @@ static int maxConnectionInprogress = 10;
             completeBlock();
         return nil;
     }
-    NSURL *url = [req URL];
-    NSString *pathPart = [url path];
-    if ([@"" isEqualToString:pathPart]) {
-        pathPart = @"/";
-    }
-    else
-    {
-        NSString *_lastPathComp = [pathPart lastPathComponent];
-        pathPart = [[pathPart stringByDeletingLastPathComponent] stringByAppendingPathComponent:[_lastPathComp URLEncodedString]];
-    }
-    NSString *portPart = [url port] ? [NSString stringWithFormat:@":%i", [[url port] intValue]] : @"";
-    NSString *sessionURLStr = [NSString stringWithFormat:@"%@://%@%@%@", [url scheme], [url host], portPart, pathPart];
-    NSMutableArray *queryParams = [[[url query] componentsSeparatedByString:@"&"] mutableCopy];
-    if (nil == queryParams)
-        queryParams = [NSMutableArray array];
-    
-    if (withSessionId)
-    {
-        //        [queryParams addObject:[NSString stringWithFormat:@"cKey=%@", [NSString getUUID]]];
-        [queryParams addObject:[NSString stringWithFormat:@"%@=%@", _accessTokenKey, _accessTokenValue]];
-    }
-    
-    sessionURLStr = [NSString stringWithFormat:@"%@%@%@", sessionURLStr,([queryParams count]?@"?":@""), [queryParams componentsJoinedByString:@"&"]];
-    NSURL *sessionURL = [NSURL URLWithString:sessionURLStr];
-    req.URL = sessionURL;
-    NSDictionary *_extra = [self extraHTTPHeaders];
-    if ([_extra isKindOfClass:[NSDictionary class]])
-    {
-        for (id _key in _extra.allKeys)
-            [req setValue:_extra[_key] forHTTPHeaderField:_key];
-    }
+    [self buildUrlFromRequest:req withSessionId:withSessionId];
     //    WCLog(@"doRequest: %@", sessionURL);
     NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
@@ -176,8 +184,23 @@ static int maxConnectionInprogress = 10;
                                                        errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
                                                     completeBlock:^(NSURLConnection*_connection){
                                                         [_connectionInProgress removeObjectForKey:_connectionKey];
-                                                        [[NSURLCache sharedURLCache] removeCachedResponseForRequest:req];
-                                                        if ([_connectionInProgress allValues].count == 0)
+                                                        if (_accessTokenValue)
+                                                        {
+                                                            [[NSURLCache sharedURLCache] removeCachedResponseForRequest:req];
+                                                            for (id _key in _connectionsToRebuild.allKeys)
+                                                            {
+                                                                NSURLConnectionWithBlocks *_conn = [_connectionsToRebuild valueForKey:_key];
+                                                                NSMutableURLRequest *_req = [NSMutableURLRequest requestWithURL:_conn.originalRequest.URL];
+                                                                [self buildUrlFromRequest:_req withSessionId:YES];
+                                                                _conn = [_conn connectionCopyWithRequest:_req];
+                                                                [_connectionsInPendding setValue:_conn forKey:_conn.identifier];
+                                                            }
+                                                            if (_connectionsToRebuild.count)
+                                                                [_connectionsToRebuild removeAllObjects];
+                                                        }
+                                                        else
+                                                            [_connectionsToRebuild setValue:_connection forKey:_connectionKey];
+                                                        if ([_connectionInProgress allValues].count == 0 && _accessTokenValue)
                                                         {
                                                             for (unsigned i=0;i<maxConnectionInprogress&&i<[[_connectionsInPendding allValues] count];i++)
                                                             {

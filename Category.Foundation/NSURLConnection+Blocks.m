@@ -98,6 +98,18 @@
     [super start];
 }
 
+- (NSURLConnectionWithBlocks *)connectionCopyWithRequest:(NSURLRequest *)httpRequest
+{
+    NSURLConnectionWithBlocks *_obj    = [NSURLConnectionWithBlocks connectionWithRequest:httpRequest
+                                                                         startImmediately:NO
+                                                                             successBlock:self.successBlock
+                                                                           httpErrorBlock:self.httpErrorBlock
+                                                                               errorBlock:self.errorBlock
+                                                                            completeBlock:self.completeBlock];
+    _obj.identifier = self.identifier;
+    return _obj;
+}
+
 + (NSURLConnectionWithBlocks *) connectionWithRequest:(NSURLRequest *) httpRequest startImmediately:(BOOL) shouldStart
                                successBlock:(void(^)(NSHTTPURLResponse *httpResponse, NSData *httpResponseBodyData))successBlock 
                              httpErrorBlock:(void(^)(NSInteger code, NSHTTPURLResponse *httpResponse, NSData *httpResponseData))httpErrorBlock 
