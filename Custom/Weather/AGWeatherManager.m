@@ -118,6 +118,10 @@ static int maxConnectionInprogress = 10;
                                                          {
                                                              [_weatherObjects removeAllObjects];
                                                              [_weatherObjects addObjectsFromArray:[_json valueForKey:@"data"][@"weather"]];
+                                                             id _fObject = [NSMutableDictionary dictionaryWithDictionary:[_json[@"data"][@"current_condition"] lastObject]];
+                                                             [_fObject setValue:_weatherObjects.firstObject[@"date"] forKey:@"date"];
+                                                             [_weatherObjects removeFirstObject];
+                                                             [_weatherObjects insertObject:_fObject atIndex:0];
                                                              cblock(_weatherObjects);
                                                          }
                                                      }
