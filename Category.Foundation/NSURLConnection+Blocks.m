@@ -98,6 +98,13 @@
     [super start];
 }
 
+- (void)cancel
+{
+    [self.assynConnectionTimer invalidate];
+    self.assynConnectionTimer = nil;
+    [super cancel];
+}
+
 - (NSURLConnectionWithBlocks *)connectionCopyWithRequest:(NSURLRequest *)httpRequest
 {
     NSURLConnectionWithBlocks *_obj    = [NSURLConnectionWithBlocks connectionWithRequest:httpRequest
