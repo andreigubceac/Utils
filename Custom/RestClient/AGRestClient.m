@@ -134,7 +134,7 @@ static int maxConnectionInprogress = 10;
     if (nil == queryParams)
         queryParams = [NSMutableArray array];
     
-    if (withSessionId && _accessTokenValue)
+    if (withSessionId && _accessTokenValue.length)
     {
         if ([queryParams.lastObject rangeOfString:_accessTokenKey].location != NSNotFound)
             [queryParams removeLastObject];
@@ -184,7 +184,7 @@ static int maxConnectionInprogress = 10;
                                                        errorBlock:^(NSString *errStr, NSError *err) { errorBlock([err code],err); }
                                                     completeBlock:^(NSURLConnection*_connection){
                                                         [_connectionInProgress removeObjectForKey:_connectionKey];
-                                                        if (_accessTokenValue)
+                                                        if (_accessTokenValue.length)
                                                         {
                                                             [[NSURLCache sharedURLCache] removeCachedResponseForRequest:req];
                                                             for (id _key in _connectionsToRebuild.allKeys)
@@ -198,9 +198,9 @@ static int maxConnectionInprogress = 10;
                                                             if (_connectionsToRebuild.count)
                                                                 [_connectionsToRebuild removeAllObjects];
                                                         }
-                                                        else
+                                                        else if (_accessTokenValue.length == 0)
                                                             [_connectionsToRebuild setValue:_connection forKey:_connectionKey];
-                                                        if ([_connectionInProgress allValues].count == 0 && _accessTokenValue)
+                                                        if ([_connectionInProgress allValues].count == 0 && _accessTokenValue.length)
                                                         {
                                                             for (unsigned i=0;i<maxConnectionInprogress&&i<[[_connectionsInPendding allValues] count];i++)
                                                             {
