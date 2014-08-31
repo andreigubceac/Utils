@@ -19,7 +19,7 @@
     NSString *_accessTokenKey, *_accessTokenValue;
 }
 @property (atomic, readonly) Reachability *reachability;
-@property (nonatomic, readonly) NSString *baseURLString;
+@property (nonatomic, strong) NSString *baseURLString;
 
 + (AGRestClient *)restClientWithBaseURLString:(NSString *)aBaseURLString;
 + (id)sessionToken;
