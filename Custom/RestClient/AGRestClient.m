@@ -198,7 +198,7 @@ static int maxConnectionInprogress = 10;
                                                             if (_connectionsToRebuild.count)
                                                                 [_connectionsToRebuild removeAllObjects];
                                                         }
-                                                        else if (_accessTokenValue.length == 0)
+                                                        else if (_accessTokenValue && _accessTokenValue.length == 0)
                                                             [_connectionsToRebuild setValue:_connection forKey:_connectionKey];
                                                         if ([_connectionInProgress allValues].count == 0 && _accessTokenValue.length)
                                                         {
