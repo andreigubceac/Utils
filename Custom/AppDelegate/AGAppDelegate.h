@@ -8,10 +8,12 @@
 #import <UIKit/UIKit.h>
 
 @class AGStorageManager;
-
 @interface AGAppDelegate : UIResponder <UIApplicationDelegate>
-@property (strong, nonatomic) UIWindow *window;
-@property (readonly, nonatomic) AGStorageManager    *storageManager;
+{
+    AGStorageManager *_storageManager;
+}
+@property (strong, nonatomic)   UIWindow *window;
+@property (readonly, nonatomic) id storageManager;//Instance of AGStorage Manager
 
 + (AGAppDelegate*)shared;
 

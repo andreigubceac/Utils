@@ -11,7 +11,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 
 @interface AGSocialManager ()<MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>//, GPPShareDelegate, GPPSignInDelegate>
 {
-    Pinterest *_pinterest;
+    id _pinterest;
     id _infoToShareDict;
 }
 @property (nonatomic, copy) void(^block)(NSError*);
@@ -43,11 +43,11 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     return nil;
 }
 
-- (Pinterest*)pinterest
+- (id)pinterest
 {
     if (_pinterest)
         return _pinterest;
-    return (_pinterest = [[Pinterest alloc] initWithClientId:[[self class] pinterestId]]);//should be a custom Id
+    return (_pinterest = nil);//[[NSClassFromString(@"Pinterest") alloc] initWithClientId:[[self class] pinterestId]]);//should be a custom Id
 }
 
 + (void)processError:(NSError*)err
@@ -261,6 +261,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 
 - (void)shareViaPinterestImageUrl:(NSURL*)imageUrl sourceUrl:(NSURL*)sourceUrl description:(NSString*)desc withCompleteBlock:(void (^)(NSError *))block
 {
+/*
     if ([[[AGSocialManager shared] pinterest] canPinWithSDK])
     {
         if (imageUrl == nil)
@@ -277,6 +278,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
         if (block)
             block([NSError errorWithDomain:@"Pinterest" code:404 userInfo:@{NSLocalizedDescriptionKey : @"You do not have Pinterest App installed, please choose another sharing option.", NSLocalizedRecoverySuggestionErrorKey : @"Choose another option"}]);
     }
+*/ 
 }
 /*
 

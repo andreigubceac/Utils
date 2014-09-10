@@ -6,19 +6,17 @@
 //
 
 #import "AGAppDelegate.h"
-#import "AGStorageManager.h"
 
 @implementation AGAppDelegate
+@synthesize storageManager = _storageManager;
+
 + (AGAppDelegate*)shared
 {
     return (AGAppDelegate*)[[UIApplication sharedApplication] delegate];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    //Model
-    _storageManager = [[AGStorageManager alloc] init];
-    
+{    
     //View
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [[UIViewController alloc] init];
@@ -36,13 +34,11 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    application.applicationIconBadgeNumber = 0;
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-    application.applicationIconBadgeNumber = 0;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
