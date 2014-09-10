@@ -10,6 +10,12 @@
 
 NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
 
+#ifdef DEBUG
+#define AGLog(...) NSLog(@"%s@%i: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:__VA_ARGS__])
+#else
+#define AGLog(...)
+#endif
+
 @implementation AGStorageManager
 #pragma mark - File Management
 
@@ -68,125 +74,5 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     return [records sortedArrayUsingDescriptors:[NSArray arrayWithObject:
                                                  [NSSortDescriptor sortDescriptorWithKey:key ascending:YES]]];
 }
-
-- (NSArray *)managedObjectsForClass:(NSString *)className sortedByKey:(NSString *)key usingArrayOfIds:(NSArray *)idArray inArrayOfIds:(BOOL)inIds {
-    __block NSArray *results = nil;
-    NSManagedObjectContext *managedObjectContext = [_coredataManager backgroundContext];
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:className];
-    NSPredicate *predicate;
-    if (inIds) {
-        predicate = [NSPredicate predicateWithFormat:@"id IN %@", idArray];
-    } else {
-        predicate = [NSPredicate predicateWithFormat:@"NOT (id IN %@)", idArray];
-    }
-    
-    [fetchRequest setPredicate:predicate];
-    [fetchRequest setSortDescriptors:[NSArray arrayWithObject:
-                                      [NSSortDescriptor sortDescriptorWithKey:key ascending:YES]]];
-    [managedObjectContext performBlockAndWait:^{
-        NSError *error = nil;
-        results = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-    }];
-    
-    return results;
-}
-
-- (NSArray *)managedObjectsToBeDeletedForClass:(NSString *)className
-{
-    __block NSArray *results = nil;
-    NSManagedObjectContext *moc = [_coredataManager backgroundContext];
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:className];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"updateDate != nil"];
-    [fetchRequest setPredicate:predicate];
-    [moc performBlockAndWait:^{
-        NSError *error = nil;
-        results = [moc executeFetchRequest:fetchRequest error:&error];
-    }];
-    
-    return results;
-}
-
-- (void)deleteObjectsFromLocalStorageEntities:(NSString*)class withPredicate:(NSPredicate*)predicate withCompleteBlock:(StoreCompleteBlock)block
-{
-    [self onWorkerThreadDoBlock:^{
-        NSArray *_allProducts = [_coredataManager.backgroundContext fetchObjectsForEntityName:class
-                                                                                propertiesToFetch:nil
-                                                                                         sortedBy:nil ascending:NO withPredicate:predicate];
-        for (NSManagedObject *obj in _allProducts)
-            [obj delete];
-        [self executeSyncCompletedOperations];
-        [self onParentThreadDoBlock:^{
-            if (block)
-                block(@([_allProducts count]),nil,YES);
-        }];
-    }];
-}
-
-- (void)deleteObjectsFromLocalStorageEntities:(NSString*)class withCompleteBlock:(StoreCompleteBlock)block
-{
-    [self deleteObjectsFromLocalStorageEntities:class withPredicate:nil withCompleteBlock:block];
-}
-
-
-- (void)processJSONDataRecordsForClass:(Class)class jsonFileName:(NSString*)jsonfileName
-  withStoredRecordsFromArrayOfIdsBlock:(NSArray*(^)(NSArray* jids))block
-                                update:(void (^)(id object, NSDictionary* record))update withCompleteBlock:(BasicBlock)cblock
-{
-    NSManagedObjectContext *managedObjectContext = [_coredataManager backgroundContext];
-    NSString *class_name = NSStringFromClass(class);
-    
-    NSArray *downloadedRecords = [self JSONDataRecordsForIdentifier:(jsonfileName?jsonfileName:class_name) sortedByKey:@"id"];
-    id _lastObject = [downloadedRecords lastObject];
-    
-    if (nil != _lastObject) {
-        NSArray *storedRecords = nil;
-        NSArray *JSONIDS = [downloadedRecords valueForKey:@"id"];
-        if (block)
-            storedRecords = block(JSONIDS);
-        else
-            storedRecords = [self managedObjectsForClass:class_name sortedByKey:@"id" usingArrayOfIds:JSONIDS inArrayOfIds:YES];
-        
-        // Loop through the recrods
-        NSManagedObject *storedManagedObject = nil;
-        
-        for (id record in downloadedRecords) {
-            NSArray *stored_objects = [storedRecords filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id = %@", @([record[@"id"] intValue])]];
-            if (stored_objects.count > 1) {
-                for (NSManagedObject *managed_obj in [stored_objects subarrayWithRange:NSMakeRange(1, stored_objects.count - 1)]) {
-                    AGLog(@"DUPLICATE: %@", managed_obj);
-                    [managedObjectContext deleteObject:managed_obj];
-                }
-            } else if (stored_objects.count > 0) {
-                storedManagedObject = stored_objects[0];
-                if (update) update(storedManagedObject, record);
-            } else {
-                NSString *entityName = [class entityName];
-                id obj = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:managedObjectContext];
-                if (update) update(obj, record);
-            }
-        }
-        
-        [self executeSyncCompletedOperations];
-        if (cblock)
-            cblock();
-    }
-    else if (cblock)
-        cblock();
-    [self deleteJSONDataRecordsForIdentifier:(jsonfileName?jsonfileName:class_name)];
-}
-
-#pragma mark - Syncing
-
-- (void)executeSyncCompletedOperations {
-    
-    OnThread([self workerThread], YES, ^{
-        [_coredataManager saveBackgroundContext];
-    });
-    OnThread(self.launchThread, YES, ^{
-        [_coredataManager saveContext];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kSyncCompletedNotificationName object:nil];
-    });
-}
-
 
 @end

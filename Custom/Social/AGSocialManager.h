@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 #import <Social/Social.h>
-#import <Pinterest/Pinterest.h>
+//#import <Pinterest/Pinterest.h>
 //#import <GooglePlus/GPPSignIn.h>
 //#import <GooglePlus/GPPShare.h>
 #import <FacebookSDK/FacebookSDK.h>

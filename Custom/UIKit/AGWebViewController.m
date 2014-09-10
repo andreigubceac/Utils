@@ -38,7 +38,6 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
-    AGLog(@"%@",error);
 }
 
 

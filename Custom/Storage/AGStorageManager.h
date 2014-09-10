@@ -6,10 +6,6 @@
 //
 
 #import "Actor.h"
-#import "AGCoreDataManager.h"
-
-#import "NSManagedObject+Additions.h"
-#import "NSManagedObjectContext+Additions.h"
 #import "NSArray+Additions.h"
 
 extern NSString *kSyncCompletedNotificationName;
@@ -19,7 +15,6 @@ typedef void (^StoreProgressBlock)(NSString *message);
 
 @interface AGStorageManager : Actor
 {
-    AGCoreDataManager *_coredataManager;//optionaly
 }
 + (NSURL *)applicationCacheDirectory;
 + (NSURL *)applicationDocumentsDirectory;
