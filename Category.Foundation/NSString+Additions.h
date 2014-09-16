@@ -8,6 +8,7 @@
 - (BOOL) isPhoneNumberFormatValid;
 - (BOOL) isDecimalFormat;
 - (BOOL) isDecimalPositiveFormat;
+- (BOOL) isZIPFormatValid;
 @end
 @interface NSString (NilCheck)
 + (NSString*)emptyString:(NSString*)s;

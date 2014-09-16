@@ -55,6 +55,12 @@
     return [[NSPredicate predicateWithFormat:@"SELF MATCHES %@",@"[+]?[0-9]*\\.?[0-9]*"] evaluateWithObject:self];
 }
 
+- (BOOL) isZIPFormatValid
+{
+    NSString *zipRegEx = @"^(\\d{5}(-\\d{4})?|[a-z]\\d[a-z][- ]*\\d[a-z]\\d)$";
+    NSPredicate *regExPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", zipRegEx];
+    return [regExPredicate evaluateWithObject:self];
+}
 @end
 
 @implementation NSString (NilCheck)
