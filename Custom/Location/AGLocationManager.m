@@ -60,7 +60,8 @@
 + (NSString*)userFriendlyauthorizationStatus
 {
     switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusAuthorized: return nil;
+        case kCLAuthorizationStatusAuthorizedAlways: return nil;
+        case kCLAuthorizationStatusAuthorizedWhenInUse: return nil;
         case kCLAuthorizationStatusDenied: return @"Location services are disabled in Settings";
         case kCLAuthorizationStatusNotDetermined: return @"User has not yet made a choice with regards to this application";
         case kCLAuthorizationStatusRestricted: return @"This application is not authorized to use location services. Due to active restrictions on location services, the user cannot change this status, and may not have personally denied authorization";
