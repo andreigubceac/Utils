@@ -55,6 +55,11 @@
 {
     
 }
+
+- (void)dismissModalViewController
+{
+    [super dismissViewControllerAnimated:YES completion:nil];
+}
 #pragma uitableview
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

@@ -14,4 +14,5 @@
 @property (nonatomic, readonly) UITableView *tableView;
 - (void)loadWithTableViewStyle:(UITableViewStyle)style;//to switch in tableViewcontroller mode
 - (void)updateUI;
+- (void)dismissModalViewController;//[super dismissViewControllerAnimated:YES completion:nil]; usefull for inline buttons / bar item
 @end
