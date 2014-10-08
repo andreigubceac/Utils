@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface AGAnalytics : NSObject
-
+- (void)logEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters timed:(BOOL)timed;
+- (void)endTimedEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters;	// non-nil parameters will update the parameters
 @end

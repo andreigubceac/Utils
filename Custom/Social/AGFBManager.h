@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Facebook.h>
+#import <FacebookSDK.h>
 
 @interface AGFBManager : NSObject
 @property (nonatomic, readonly, strong) id<FBGraphUser> me;
