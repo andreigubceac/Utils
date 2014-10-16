@@ -177,7 +177,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     if(![MFMessageComposeViewController canSendText])
     {
         if (block)
-            block([NSError errorWithDomain:@"MFMessageComposeViewController" code:404 userInfo:@{NSLocalizedDescriptionKey: @"This device does not have Text Message capabilities"}]);
+            block([NSError errorWithDomain:@"MFMessageComposeViewController" code:MessageComposeResultFailed userInfo:@{NSLocalizedDescriptionKey: @"This device does not have Text Message capabilities"}]);
         return;
     }
     self.block = block;
