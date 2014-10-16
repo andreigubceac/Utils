@@ -130,7 +130,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     if(![MFMailComposeViewController canSendMail])
     {
         if (block)
-            block([NSError errorWithDomain:@"MFMailComposeViewController" code:404 userInfo:@{NSLocalizedDescriptionKey: @"No email accounts are configured on this device. Please set up an account in the Settings Application."}]);
+            block([NSError errorWithDomain:@"MFMailComposeViewController" code:MFMailComposeResultFailed userInfo:@{NSLocalizedDescriptionKey: @"No email accounts are configured on this device. Please set up an account in the Settings Application."}]);
         return;
     }
     self.block = block;
