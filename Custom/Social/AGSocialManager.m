@@ -211,23 +211,22 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     else if ([FBDialogs canPresentOSIntegratedShareDialogWithSession:Nil])
     {
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-        if ([FBDialogs canPresentOSIntegratedShareDialogWithSession:nil])
-            [FBDialogs presentOSIntegratedShareDialogModallyFrom:_w.rootViewController
-                                                     initialText:desc?desc:title
-                                                           image:timage
-                                                             url:link
-                                                         handler:^(FBOSIntegratedShareDialogResult result, NSError *error) {
-                                                             if (block)
-                                                                 block(error?error:(result == FBOSIntegratedShareDialogResultCancelled?[NSError errorWithDomain:@"FBOSIntegratedShareDialogResult" code:FBOSIntegratedShareDialogResultCancelled userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%u",result]}]:nil));
-                                                         }];
+        [FBDialogs presentOSIntegratedShareDialogModallyFrom:_w.rootViewController
+                                                 initialText:desc?desc:title
+                                                       image:timage
+                                                         url:link
+                                                     handler:^(FBOSIntegratedShareDialogResult result, NSError *error) {
+                                                         if (block)
+                                                             block(error?error:(result == FBOSIntegratedShareDialogResultCancelled?[NSError errorWithDomain:@"FBOSIntegratedShareDialogResult" code:FBOSIntegratedShareDialogResultCancelled userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%lu",result]}]:nil));
+                                                     }];
     }
     else
     {
         NSMutableDictionary* params = [NSMutableDictionary dictionary];
         [params setValue:title forKey:@"name"];
-        [params setValue:desc forKey:@"description"];
+        [params setValue:desc forKey:@"linkDescription"];
         [params setValue:[link absoluteString] forKey:@"link"];
-        [params setValue:[turl absoluteString] forKey:@"image"];
+        [params setValue:[turl absoluteString] forKey:@"picture"];
         [FBWebDialogs presentFeedDialogModallyWithSession:Nil
                                                parameters:params
                                                   handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
@@ -244,13 +243,14 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 {
     if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
-        __weak SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+        SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         if (url)
             [_vc addURL:url];
         [_vc setInitialText:desc];
         [_vc addImage:image];
         [_vc setCompletionHandler:^(SLComposeViewControllerResult res){
-            [_vc dismissViewControllerAnimated:YES completion:^{if(block)block(nil);}];
+            UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
+            [_w.rootViewController dismissViewControllerAnimated:YES completion:^{if(block)block(nil);}];
         }];
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
         [_w.rootViewController presentViewController:_vc animated:YES completion:nil];
