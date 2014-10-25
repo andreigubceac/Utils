@@ -1,10 +1,6 @@
 #import "NSArray+Additions.h"
 
 @implementation NSArray (Additions)
-- (id)firstObject
-{
-    return ([self count]>0?[self objectAtIndex:0]:nil);
-}
 
 - (NSMutableArray*)nullFreeRecords
 {

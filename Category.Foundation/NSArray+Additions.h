@@ -1,7 +1,6 @@
 #import <Foundation/Foundation.h>
 
 @interface NSArray (Additions)
-- (id)firstObject;
 - (NSMutableArray*)nullFreeRecords;
 @end
 
