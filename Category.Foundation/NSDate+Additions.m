@@ -14,20 +14,20 @@
 {
     NSDate *startDate = [[self stringWithDateFormat:@"yyyy-MM-dd"] dateWithDateFormat:@"yyyy-MM-dd"];
     endDate = [[endDate stringWithDateFormat:@"yyyy-MM-dd"] dateWithDateFormat:@"yyyy-MM-dd"];
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *comps = [gregorian components:NSDayCalendarUnit fromDate:startDate toDate:endDate options:0];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *comps = [gregorian components:NSCalendarUnitDay fromDate:startDate toDate:endDate options:0];
     return [comps day];
 }
 
 NSMutableArray * NSStringFromComponent(NSString *name, NSUInteger val, NSMutableArray *acc)
 {
     if (0 == val)
-	{
+    {
         return acc;
     }
     NSMutableString *str = [NSMutableString stringWithFormat:@"%lu %@", (unsigned long)val, name];
-	if (val > 1)
-	{
+    if (val > 1)
+    {
         [str appendString:@"s"];
     }
     [acc addObject:str];
@@ -36,8 +36,8 @@ NSMutableArray * NSStringFromComponent(NSString *name, NSUInteger val, NSMutable
 
 - (NSString *) humanizedTimeIntervalToDate:(NSDate *) endDate
 {
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *dateComponents = [gregorian components:NSDayCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:self toDate:endDate options:0];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *dateComponents = [gregorian components:NSCalendarUnitDay | NSCalendarUnitDay | NSCalendarUnitSecond fromDate:self toDate:endDate options:0];
     // TODO: use some pluralize library
     NSMutableArray *components = NSStringFromComponent(@"sec", [dateComponents second], NSStringFromComponent(@"min", [dateComponents minute], NSStringFromComponent(@"day", [dateComponents day], [NSMutableArray array])));
     return [components componentsJoinedByString:@" "];
@@ -63,8 +63,8 @@ NSMutableArray * NSStringFromComponent(NSString *name, NSUInteger val, NSMutable
 
 - (NSString*)datePrefix
 {
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *dc = [cal components:NSDayCalendarUnit fromDate:self];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *dc = [cal components:NSCalendarUnitDay fromDate:self];
     if ([dc day] >= 11 && [dc day] <= 13) {
         return @"th";
     }
@@ -102,36 +102,36 @@ NSMutableArray * NSStringFromComponent(NSString *name, NSUInteger val, NSMutable
 
 - (NSString*)userfriendlyFormat
 {
-	NSString *ufdate = nil;
+    NSString *ufdate = nil;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
     NSTimeInterval elapsed = now - [self timeIntervalSince1970];
-	if(elapsed <= 0) ufdate = @"Now";
-	else if(elapsed == 1) ufdate = @"1 second ago";
-	else if(elapsed < 60) ufdate = [NSString stringWithFormat:@"%.0f seconds ago",elapsed];
-	else if(elapsed < 3600) //One hour in seconds
-	{
-		int mins = floor(elapsed/60);
-		int secs = (int)elapsed%60;
-		int disp = MIN((secs <= 30 ? mins : mins + 1), 59);
-		ufdate =  [NSString stringWithFormat:@"%.0d minute%@ ago",disp,(disp == 1 ? @"" : @"s")];
-	}
-	else if(elapsed < 86400) //One day in seconds
-	{
-		int hours = floor(elapsed/3600);
+    if(elapsed <= 0) ufdate = @"Now";
+    else if(elapsed == 1) ufdate = @"1 second ago";
+    else if(elapsed < 60) ufdate = [NSString stringWithFormat:@"%.0f seconds ago",elapsed];
+    else if(elapsed < 3600) //One hour in seconds
+    {
+        int mins = floor(elapsed/60);
+        int secs = (int)elapsed%60;
+        int disp = MIN((secs <= 30 ? mins : mins + 1), 59);
+        ufdate =  [NSString stringWithFormat:@"%.0d minute%@ ago",disp,(disp == 1 ? @"" : @"s")];
+    }
+    else if(elapsed < 86400) //One day in seconds
+    {
+        int hours = floor(elapsed/3600);
         int mins = floor(((int)elapsed%3600)/60);
-		int disp = MIN((mins <= 30 ? hours : hours + 1), 23);
-		ufdate = [NSString stringWithFormat:@"%d hour%@ ago",disp,(disp == 1 ? @"" : @"s")];
-	}
-	else if(elapsed < 604800) //One week in seconds
-	{
-		int days = floor(elapsed/86400);
-		int hours = floor(((int)elapsed%86400)/3600);
-		int disp = MIN((hours <= 12 ? days : days + 1), 6);
-		ufdate = [NSString stringWithFormat:@"%d day%@ ago", disp,(disp == 1 ? @"" : @"s")];
-	}
-	else
+        int disp = MIN((mins <= 30 ? hours : hours + 1), 23);
+        ufdate = [NSString stringWithFormat:@"%d hour%@ ago",disp,(disp == 1 ? @"" : @"s")];
+    }
+    else if(elapsed < 604800) //One week in seconds
+    {
+        int days = floor(elapsed/86400);
+        int hours = floor(((int)elapsed%86400)/3600);
+        int disp = MIN((hours <= 12 ? days : days + 1), 6);
+        ufdate = [NSString stringWithFormat:@"%d day%@ ago", disp,(disp == 1 ? @"" : @"s")];
+    }
+    else
         return [self shortDescription];
-	return ufdate;
+    return ufdate;
 }
 
 - (NSString*)stringWithFormat:(NSString*)format
