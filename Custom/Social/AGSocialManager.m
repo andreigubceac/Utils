@@ -217,7 +217,7 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
                                                          url:link
                                                      handler:^(FBOSIntegratedShareDialogResult result, NSError *error) {
                                                          if (block)
-                                                             block(error?error:(result == FBOSIntegratedShareDialogResultCancelled?[NSError errorWithDomain:@"FBOSIntegratedShareDialogResult" code:FBOSIntegratedShareDialogResultCancelled userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%u",result]}]:nil));
+                                                             block(error?error:(result == FBOSIntegratedShareDialogResultCancelled?[NSError errorWithDomain:@"FBOSIntegratedShareDialogResult" code:FBOSIntegratedShareDialogResultCancelled userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%lu",result]}]:nil));
                                                      }];
     }
     else
