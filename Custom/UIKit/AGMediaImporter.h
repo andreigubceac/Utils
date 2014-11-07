@@ -6,6 +6,7 @@
 //
 
 #import "UIImagePickerController+Blocks.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface AGMediaImporterSheet : UIActionSheet
 + (void)showMediaImporterMenuWithSuccesBlock:(void(^)(UIImagePickerControllerWithBlocks* picker, id info))successBock

@@ -50,24 +50,54 @@
     {
         if (actionSheet.destructiveButtonIndex != -1)
             buttonIndex--;
-        UIImagePickerControllerWithBlocks *picker = [[UIImagePickerControllerWithBlocks alloc] init];
-        picker.allowsEditing = actionSheet.tag;
-        picker.sourceType = (buttonIndex==0?UIImagePickerControllerSourceTypePhotoLibrary:UIImagePickerControllerSourceTypeCamera);
-        [self.viewController presentViewController:picker animated:YES completion:nil];
-        picker.didCancelBlock = ^(UIImagePickerControllerWithBlocks *picker_)
-        {
-            [self.viewController dismissViewControllerAnimated:YES completion:^{
-                if (self.cancelBlock)
-                    self.cancelBlock();
-            }];
+        
+        void (^block)() = ^{
+            UIImagePickerControllerWithBlocks *picker = [[UIImagePickerControllerWithBlocks alloc] init];
+            picker.allowsEditing = actionSheet.tag;
+            picker.sourceType = (buttonIndex==0?UIImagePickerControllerSourceTypePhotoLibrary:UIImagePickerControllerSourceTypeCamera);
+            [self.viewController presentViewController:picker animated:YES completion:nil];
+            picker.didCancelBlock = ^(UIImagePickerControllerWithBlocks *picker_)
+            {
+                [self.viewController dismissViewControllerAnimated:YES completion:^{
+                    if (self.cancelBlock)
+                        self.cancelBlock();
+                }];
+            };
+            picker.didFinishPickingMediaWithInfoBlock = ^(UIImagePickerControllerWithBlocks *picker_, NSDictionary *info)
+            {
+                [self.viewController dismissViewControllerAnimated:YES completion:^{
+                    if (self.successBock)
+                        self.successBock(picker_, info);
+                }];
+            };
         };
-        picker.didFinishPickingMediaWithInfoBlock = ^(UIImagePickerControllerWithBlocks *picker_, NSDictionary *info)
+        
+        if (buttonIndex == 0)
         {
-            [self.viewController dismissViewControllerAnimated:YES completion:^{
-                if (self.successBock)
-                    self.successBock(picker_, info);
+            block();
+            return;
+        }
+        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+        if(authStatus == AVAuthorizationStatusAuthorized) {
+            block();
+        } else if(authStatus == AVAuthorizationStatusDenied){
+            if (successBock)
+                successBock(nil, [NSError errorWithDomain:NSStringFromClass([self class]) code:404 userInfo:@{NSLocalizedDescriptionKey : @"Access Denied from Settings"}]);
+        } else if(authStatus == AVAuthorizationStatusRestricted){
+            // restricted, normally won't happen
+            if (successBock)
+                successBock(nil, [NSError errorWithDomain:NSStringFromClass([self class]) code:404 userInfo:@{NSLocalizedDescriptionKey : @"Access Restricted"}]);
+        } else if(authStatus == AVAuthorizationStatusNotDetermined){
+            // not determined?!
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+                if(granted)
+                    block();
+                 else if (successBock)
+                     successBock(nil, [NSError errorWithDomain:NSStringFromClass([self class]) code:404 userInfo:@{NSLocalizedDescriptionKey : @"Not allowed from Settings"}]);
             }];
-        };
+        } else {
+            // impossible, unknown authorization status
+        }
     }
     else if (self.cancelBlock)
         self.cancelBlock();
