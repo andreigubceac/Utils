@@ -7,7 +7,7 @@
 
 #import "AGWeatherManager.h"
 
-const NSString *_key = @"e3aebbbb4w22caasjxkpcs6v";
+const NSString *_key = @"a79a9a44e0671cd5fffe63aa070c7";
 NSString *kWeatherDateFormat = @"YYYY-MM-dd";
 
 @interface AGWeatherManager ()
@@ -106,7 +106,7 @@ static int maxConnectionInprogress = 10;
         return ;
     }
 
-    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/weather.ashx?%@&format=json&num_of_days=%lu&key=%@",_connectionKey,(unsigned long)nextNrDays,_key]]];
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v2/weather.ashx?%@&format=json&num_of_days=%lu&key=%@",_connectionKey,(unsigned long)nextNrDays,_key]]];
     __block NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
                                                      successBlock:^(NSHTTPURLResponse *res, NSData *resBody){
@@ -177,7 +177,7 @@ static int maxConnectionInprogress = 10;
         return ;
     }
     
-    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v1/search.ashx?q=%f,%f&format=json&num_of_results=1&key=%@",coordinates.latitude,coordinates.longitude, _key]]];
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://api.worldweatheronline.com/free/v2/search.ashx?q=%f,%f&format=json&num_of_results=1&key=%@",coordinates.latitude,coordinates.longitude, _key]]];
     __block NSURLConnectionWithBlocks *connection = nil;
     connection = [NSURLConnectionWithBlocks connectionWithRequest:req startImmediately:NO
                                                      successBlock:^(NSHTTPURLResponse *res, NSData *_jsonData){
