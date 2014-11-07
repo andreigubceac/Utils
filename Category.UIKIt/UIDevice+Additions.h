@@ -12,8 +12,10 @@ typedef enum
     UIDeviceTypeIPhone          = 1 << 1,
     UIDeviceTypeIPhoneRetina    = 1 << 2,
     UIDeviceTypeIPhone5         = 1 << 3,
-    UIDeviceTypeIPad            = 1 << 4,
-    UIDeviceTypeIPadRetina      = 1 << 5
+    UIDeviceTypeIPhone6         = 1 << 4,
+    UIDeviceTypeIPhone6Plus     = 1 << 5,
+    UIDeviceTypeIPad            = 1 << 6,
+    UIDeviceTypeIPadRetina      = 1 << 7
     
 } UIDeviceType;
 

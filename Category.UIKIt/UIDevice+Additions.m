@@ -24,6 +24,10 @@
                 thisDevice |= UIDeviceTypeIPhoneRetina;
                 if ([[UIScreen mainScreen] bounds].size.height == 568)
                     thisDevice |= UIDeviceTypeIPhone5;
+                else if ([[UIScreen mainScreen] bounds].size.height == 667)
+                    thisDevice |= UIDeviceTypeIPhone6;
+                else if ([[UIScreen mainScreen] bounds].size.height == 736)
+                    thisDevice |= UIDeviceTypeIPhone6;
             }
         }
     }
