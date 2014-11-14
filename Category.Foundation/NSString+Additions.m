@@ -106,3 +106,23 @@
 }
 
 @end
+
+@implementation NSString (unicodeUTF16)
+
+- (NSString*)unicodeUTF16Translation
+{
+    NSString *_decode = [self stringByReplacingOccurrencesOfString:@"Äƒ" withString:@"ă"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"Ã¢" withString:@"â"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"Ã®" withString:@"î"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"È™" withString:@"ș"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"È›" withString:@"ț"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"â€“" withString:@"-"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"È˜" withString:@"Ș"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"ÃŽ" withString:@"Î"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"Ã‰" withString:@"É"];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"â€œ" withString:@"\""];
+    _decode = [_decode stringByReplacingOccurrencesOfString:@"â€" withString:@"\""];
+    return _decode;
+}
+
+@end

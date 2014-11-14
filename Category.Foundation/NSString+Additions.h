@@ -22,3 +22,7 @@
 @interface NSString (URL)
 - (NSMutableDictionary*)queryParams;
 @end
+
+@interface NSString (unicodeUTF16)
+- (NSString*)unicodeUTF16Translation;
+@end

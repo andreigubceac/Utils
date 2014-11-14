@@ -239,7 +239,7 @@ static int maxConnectionInprogress = 10;
 - (NSURLConnection *)doJSONRequest:(NSMutableURLRequest *)req withSessionId:(BOOL)withSessionId
                       successBlock:(ResultBlock)successBlock errorBlock:(CommunicationErrorBlock)errorBlock completeBlock:(BasicBlock)completeBlock {
     
-    [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [req setValue:@"application/json; charset=utf-16" forHTTPHeaderField:@"Content-Type"];
     return [self doRequestAndParseJSON:req withSessionId:withSessionId successBlock:successBlock errorBlock:errorBlock completeBlock:completeBlock];
 }
 
