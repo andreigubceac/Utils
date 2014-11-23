@@ -13,6 +13,7 @@
 + (id)loadFromNib;
 + (NSString*)bundleIdentifier;
 + (NSString*)appInfoVersion;
++ (NSString*)appBundleVersion;
 @end
 
 inline static id nilToNull(id obj)  {return (obj == nil) ? [NSNull null] : obj;}

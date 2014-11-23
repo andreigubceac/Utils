@@ -26,6 +26,14 @@
     return _appVersion;
 }
 
++ (NSString*)appBundleVersion
+{
+    static NSString* _appVersion;
+    if (nil == _appVersion)
+        _appVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];
+    return _appVersion;
+}
+
 + (NSString*)bundleIdentifier
 {
     return [[NSBundle mainBundle] infoDictionary][@"CFBundleIdentifier"];
