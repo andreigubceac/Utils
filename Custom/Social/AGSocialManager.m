@@ -159,7 +159,10 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
             else
             {
                 UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-                [_w.rootViewController presentViewController:controller animated:YES completion:^(void){
+                UIViewController *_vc = _w.rootViewController;
+                if (_vc.presentedViewController)
+                    _vc = _vc.presentedViewController;
+                [_vc presentViewController:controller animated:YES completion:^(void){
                     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
                 }];
             }
@@ -185,7 +188,10 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     controller.messageComposeDelegate = self;
     [controller setBody:body];
     UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-    [_w.rootViewController presentViewController:controller animated:YES completion:^(void){
+    UIViewController *_vc = _w.rootViewController;
+    if (_vc.presentedViewController)
+        _vc = _vc.presentedViewController;
+    [_vc presentViewController:controller animated:YES completion:^(void){
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     }];
 }
