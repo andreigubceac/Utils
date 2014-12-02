@@ -217,7 +217,10 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     else if ([FBDialogs canPresentOSIntegratedShareDialogWithSession:Nil])
     {
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-        [FBDialogs presentOSIntegratedShareDialogModallyFrom:_w.rootViewController
+        UIViewController *_vc = _w.rootViewController;
+        if (_vc.presentedViewController)
+            _vc = _vc.presentedViewController;
+        [FBDialogs presentOSIntegratedShareDialogModallyFrom:_vc
                                                  initialText:desc?desc:title
                                                        image:timage
                                                          url:link
@@ -249,17 +252,23 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
 {
     if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
-        SLComposeViewController *_vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+        SLComposeViewController *_cvc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         if (url)
-            [_vc addURL:url];
-        [_vc setInitialText:desc];
-        [_vc addImage:image];
-        [_vc setCompletionHandler:^(SLComposeViewControllerResult res){
+            [_cvc addURL:url];
+        [_cvc setInitialText:desc];
+        [_cvc addImage:image];
+        [_cvc setCompletionHandler:^(SLComposeViewControllerResult res){
             UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-            [_w.rootViewController dismissViewControllerAnimated:YES completion:^{if(block)block(nil);}];
+            UIViewController *_vc = _w.rootViewController;
+            if (_vc.presentedViewController)
+                _vc = _vc.presentedViewController;
+            [_vc dismissViewControllerAnimated:YES completion:^{if(block)block(nil);}];
         }];
         UIWindow *_w = [[UIApplication sharedApplication].windows firstObject];
-        [_w.rootViewController presentViewController:_vc animated:YES completion:nil];
+        UIViewController *_vc = _w.rootViewController;
+        if (_vc.presentedViewController)
+            _vc = _vc.presentedViewController;
+        [_vc presentViewController:_cvc animated:YES completion:nil];
     }
     else if (block)
         block([NSError errorWithDomain:@"SLServiceTypeTwitter" code:404 userInfo:@{NSLocalizedDescriptionKey: @"No Twitter accounts are configured on this device. Please set up an account in the Settings Application.", NSLocalizedRecoverySuggestionErrorKey: @"Login to Twitter in Settings"}]);
