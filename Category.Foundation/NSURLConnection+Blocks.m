@@ -9,8 +9,11 @@
 @property (nonatomic, copy) void(^httpErrorBlock)(NSInteger code, NSHTTPURLResponse *httpResponse, NSData *httpResponseData);
 @property (nonatomic, strong) NSTimer *assynConnectionTimer;
 @end
-
+#ifdef DEBUG
 #define ULog(...) NSLog(@"%s@%i: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:__VA_ARGS__])
+#else
+#define ULog(...)
+#endif
 
 @implementation NSURLConnectionWithBlocks
 
