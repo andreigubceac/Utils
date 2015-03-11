@@ -62,11 +62,6 @@ static int maxConnectionInprogress = 10;
 - (BOOL)isNetworkOK
 {
     return [_reachability isReachable];
-    if ([_reachability isReachableViaWiFi])
-        return YES;
-    else if ([_reachability isReachableViaWWAN])
-        return YES;
-    return NO;
 }
 
 - (BOOL)canAutoLogin
