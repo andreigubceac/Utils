@@ -34,38 +34,65 @@ NSString *kSyncCompletedNotificationName = @"SyncCompletedNotificationName";
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
-- (void)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier
+- (BOOL)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier toUrl:(NSURL*)url
 {
-    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
+    if (url == nil)
+        return NO;
+    
+    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:url];
     NSArray *records = [nullToNil(response) nullFreeRecords];
     
     if (nil == records)
-        return;
+        return NO;
     
     NSData *_data = [NSJSONSerialization dataWithJSONObject:records options:NSJSONWritingPrettyPrinted error:nil];
     if (![_data writeToURL:fileURL atomically:YES]) {
         AGLog(@"Failed all attempts to save reponse to disk: %@", response);
+        return NO;
     } else {
         NSNumber *file_size = nil;
         NSError *err = nil;
         [fileURL getResourceValue:&file_size forKey:NSURLFileSizeKey error:&err];
         AGLog(@"FileSize for %@: %@ [%@]", identifier, file_size, [fileURL path]);
     }
+    return YES;
 }
 
-- (void)deleteJSONDataRecordsForIdentifier:(NSString *)identifier {
-    NSURL *url = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
+- (BOOL)writeJSONResponse:(id)response toDiskWithIdentifier:(NSString*)identifier
+{
+    return [self writeJSONResponse:response toDiskWithIdentifier:identifier toUrl:[AGStorageManager applicationCacheDirectory]];
+}
+
+- (BOOL)deleteJSONDataRecordsForIdentifier:(NSString *)identifier toUrl:(NSURL*)url
+{
+    if (url == nil)
+        return NO;
+    url = [NSURL URLWithString:identifier relativeToURL:url];
     NSError *error = nil;
     BOOL deleted = [[NSFileManager defaultManager] removeItemAtURL:url error:&error];
     if (!deleted) {
         AGLog(@"Unable to delete JSON Records at %@, reason: %@", url, error);
     }
+    return deleted;
 }
 
-- (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier {
-    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:[AGStorageManager applicationCacheDirectory]];
+- (BOOL)deleteJSONDataRecordsForIdentifier:(NSString *)identifier
+{
+    return [self deleteJSONDataRecordsForIdentifier:identifier toUrl:[AGStorageManager applicationCacheDirectory]];
+}
+
+- (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier fromUrl:(NSURL*)url
+{
+    if (url == nil)
+        return nil;
+    NSURL *fileURL = [NSURL URLWithString:identifier relativeToURL:url];
     NSData *_data = [NSData dataWithContentsOfURL:fileURL];
     return _data?[NSJSONSerialization JSONObjectWithData:_data options:NSJSONReadingAllowFragments error:nil]:nil;
+}
+
+- (NSDictionary *)JSONDictionaryForIdentifier:(NSString *)identifier
+{
+    return [self JSONDictionaryForIdentifier:identifier fromUrl:[AGStorageManager applicationCacheDirectory]];
 }
 
 - (NSArray *)JSONDataRecordsForIdentifier:(NSString *)identifier sortedByKey:(NSString *)key {
