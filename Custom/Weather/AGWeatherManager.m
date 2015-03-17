@@ -6,6 +6,7 @@
 //
 
 #import "AGWeatherManager.h"
+#import "NSArray+Additions.h"
 
 const NSString *_key = @"a79a9a44e0671cd5fffe63aa070c7";
 NSString *kWeatherDateFormat = @"YYYY-MM-dd";
