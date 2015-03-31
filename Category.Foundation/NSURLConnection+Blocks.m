@@ -66,7 +66,7 @@
             self.successBlock(self.httpResponse, self.httpResponseData);
         }
     }
-    else
+    else if (self.httpErrorBlock)
 	{
         self.httpErrorBlock([self.httpResponse statusCode], self.httpResponse, self.httpResponseData);
     }
