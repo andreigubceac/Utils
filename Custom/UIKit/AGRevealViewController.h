@@ -8,24 +8,25 @@
 #import <UIKit/UIKit.h>
 
 extern float kOffsetX;
-extern NSString *kAGRevealViewControllerWillRevealNotification, *kAGRevealViewControllerDidRevealNotification;
-extern NSString *kAGRevealViewControllerWillCoverNotification, *kAGRevealViewControllerDidCoverNotification;
+extern NSString *_Null_unspecified kAGRevealViewControllerWillRevealNotification, *_Null_unspecified kAGRevealViewControllerDidRevealNotification;
+extern NSString *_Null_unspecified kAGRevealViewControllerWillCoverNotification, *_Null_unspecified kAGRevealViewControllerDidCoverNotification;
 
 @interface AGRevealViewController : UIViewController
-@property (nonatomic, strong) UIViewController *leftViewController, *centerViewController, *rightViewController;
+@property (nullable, nonatomic, strong) UIViewController *leftViewController, *rightViewController;
+@property (nonnull, nonatomic, strong) UIViewController *centerViewController;
 @property (nonatomic) BOOL disableLeftReveal, disableRightReveal;
-@property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
+@property (nonnull, nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 
-- (id)initWithLeftViewController:(UIViewController*)leftViewController
-             rightViewController:(UIViewController*)rightViewController centerViewController:(UIViewController*)centerViewController;
+- (nonnull id)initWithLeftViewController:(nullable UIViewController*)leftViewController
+             rightViewController:(nullable UIViewController*)rightViewController centerViewController:(nonnull UIViewController*)centerViewController;
 
-- (void)toggleLeftSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;
-- (void)toggleRightSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
-- (void)closeLeftSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
-- (void)closeRightSideAnimated:(BOOL)animated completeBlock:(void(^)(void))block;;
+- (void)toggleLeftSideAnimated:(BOOL)animated completeBlock:(nullable void(^)(void))block;
+- (void)toggleRightSideAnimated:(BOOL)animated completeBlock:(nullable void(^)(void))block;;
+- (void)closeLeftSideAnimated:(BOOL)animated completeBlock:(nullable void(^)(void))block;;
+- (void)closeRightSideAnimated:(BOOL)animated completeBlock:(nullable void(^)(void))block;;
 
-- (UIBarButtonItem*)leftItemWithButton:(UIButton*)button;
-- (UIBarButtonItem*)rightItemWithButton:(UIButton*)button;
+- (nonnull UIBarButtonItem*)leftItemWithButton:(nonnull UIButton*)button;
+- (nonnull UIBarButtonItem*)rightItemWithButton:(nonnull UIButton*)button;
 
-- (void)panGestureAction:(UIPanGestureRecognizer*)g;//subclass
+- (void)panGestureAction:(nonnull UIPanGestureRecognizer*)g;//subclass
 @end
