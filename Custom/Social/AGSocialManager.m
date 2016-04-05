@@ -59,7 +59,6 @@ static NSString *_pinterestUrl = @"http://www.pinterest.com";
     else
     {
         if  (err.code == (MFMailComposeResultCancelled | MessageComposeResultCancelled) ||
-             err.code == (FBOSIntegratedShareDialogResultCancelled | FBWebDialogResultDialogNotCompleted) ||
              err.code == (SLComposeViewControllerResultCancelled)
 //             || err.code == (kGPPErrorShareboxCanceled | kGPPErrorShareboxCanceledByClient)
              )

@@ -11,7 +11,7 @@
 //#import <Pinterest/Pinterest.h>
 //#import <GooglePlus/GPPSignIn.h>
 //#import <GooglePlus/GPPShare.h>
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @interface AGSocialManager : NSObject
 + (AGSocialManager*)shared;
