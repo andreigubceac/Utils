@@ -18,3 +18,10 @@
 @property (nonatomic) CGSize size;
 
 @end
+
+IB_DESIGNABLE
+@interface UIView (Layer)
+@property (nonatomic, readwrite) IBInspectable CGFloat borderWidth, cornerRadius;
+@property (nonatomic, readwrite) IBInspectable UIColor *borderColor;
+
+@end

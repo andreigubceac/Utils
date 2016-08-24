@@ -148,5 +148,32 @@
     self.frame = frame;
 }
 
+@end
 
+@implementation UIView (Layer)
+
+- (void)setBorderColor:(UIColor *)borderColor {
+    self.layer.borderColor = borderColor.CGColor;
+}
+
+- (UIColor*)borderColor {
+    return [UIColor colorWithCGColor:self.layer.borderColor];
+}
+
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    self.layer.cornerRadius = cornerRadius;
+    self.clipsToBounds = YES;
+}
+
+- (CGFloat)cornerRadius {
+    return self.layer.cornerRadius;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth {
+    self.layer.borderWidth = borderWidth;
+}
+
+- (CGFloat)borderWidth {
+    return self.layer.borderWidth;
+}
 @end
