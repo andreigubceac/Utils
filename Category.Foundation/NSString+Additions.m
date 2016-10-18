@@ -38,10 +38,11 @@
 {
     return [[self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]>0;//todo
     //need a regex for all countries
+/*
     NSString *phoneRegEx = @"[235689][0-9]{6}([0-9]{3})?";
-    
     NSPredicate *regExPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", phoneRegEx];
     return [regExPredicate evaluateWithObject:self];
+ */
 }
 
 //http://www.regular-expressions.info/floatingpoint.html
